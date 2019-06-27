@@ -5,11 +5,13 @@
   "author": "Jojo Tutor <jeshrave003@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon app.js --watch app.js --watch src"
+    "dev": "nodemon bin/www --watch bin/www --watch app.js --watch services"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
-    "express": "^4.17.1"
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "mongoose": "^5.6.1"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
