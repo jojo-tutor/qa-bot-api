@@ -1,63 +1,60 @@
 const express = require('express');
 
 const router = express.Router();
+const model = require('./model');
 
-let data = [
-  {
-    id: '1',
-    question: 'user 1',
-  },
-  {
-    id: '2',
-    question: 'user 2',
-  },
-  {
-    id: '3',
-    question: 'user 3',
-  },
-  {
-    id: '4',
-    question: 'user 4',
-  },
-];
-
-router.get('/', (req, res) => {
-  res.status(200).json(data);
+router.get('/', async (req, res) => {
+  try {
+    const records = await model.find();
+    res.status(200).json(records);
+  } catch (error) {
+    console.error(error);
+    res.status(404).json(error);
+  }
 });
 
-router.post('/', (req, res) => {
-  const newItem = {
-    id: Date.now().toString(),
-    question: req.body.question,
-  };
-  data.push(newItem);
-  res.status(200).json(newItem);
+router.get('/:id', async (req, res) => {
+  try {
+    const record = await model.findById(req.params.id);
+    res.status(200).json(record);
+  } catch (error) {
+    console.error(error);
+    res.status(404).json(error);
+  }
 });
 
-router.get('/:id', (req, res) => {
-  const item = data.find(e => e.id === req.params.id) || {};
-  res.status(200).json(item);
+router.post('/', async (req, res) => {
+  try {
+    const createdRecord = await model.create(req.body);
+    res.status(200).json(createdRecord);
+  } catch (error) {
+    console.error(error);
+    res.status(404).json(error);
+  }
 });
 
-router.put('/:id', (req, res) => {
-  let updatedItem = {};
-  data = data.map((e) => {
-    if (e.id === req.params.id) {
-      updatedItem = {
-        id: req.params.id,
-        question: req.body.question,
-      };
-      return updatedItem;
-    }
-    return e;
-  });
-  res.status(200).json(updatedItem);
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedRecord = await model.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+    );
+    res.status(200).json(updatedRecord);
+  } catch (error) {
+    console.error(error);
+    res.status(404).json(error);
+  }
 });
 
-router.delete('/:id', (req, res) => {
-  const deletedItem = data.find(e => e.id === req.params.id) || {};
-  data = data.filter(e => e.id !== req.params.id);
-  res.status(200).send(deletedItem);
+router.delete('/:id', async (req, res) => {
+  try {
+    const deletedRecord = await model.findByIdAndDelete(req.params.id);
+    res.status(200).json(deletedRecord);
+  } catch (error) {
+    console.error(error);
+    res.status(404).json(error);
+  }
 });
 
 module.exports = router;

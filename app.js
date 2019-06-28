@@ -9,6 +9,8 @@ const bodyParser = require('body-parser');
 const companies = require('./services/company/route');
 const users = require('./services/user/route');
 const questions = require('./services/question/route');
+const tests = require('./services/test/route');
+const categories = require('./services/category/route');
 
 // connect db
 const dbOptions = { useNewUrlParser: true };
@@ -30,5 +32,7 @@ app.get('/', (req, res) => res.send('hello world!'));
 app.use('/companies', companies);
 app.use('/users', users);
 app.use('/questions', questions);
+app.use('/tests', tests);
+app.use('/categories', categories);
 
 module.exports = app;
