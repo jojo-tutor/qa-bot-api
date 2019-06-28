@@ -8,6 +8,7 @@ const Test = new Schema({
   skills: Array,
   questions: Array,
   difficulty: String,
+  time_limit: Number, // in seconds
 });
 
 module.exports = mongoose.model('Test', Test);

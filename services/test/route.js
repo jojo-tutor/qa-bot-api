@@ -38,7 +38,7 @@ router.put('/:id', async (req, res) => {
     const updatedRecord = await model.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true },
+      { new: true, runValidators: true },
     );
     res.status(200).json(updatedRecord);
   } catch (error) {

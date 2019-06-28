@@ -6,7 +6,7 @@ const Result = new Schema({
   company_id: String,
   test_id: String,
   questions_answered: Number,
-  ellapsed_time: String,
+  ellapsed_time: String, // in seconds
   completed_date: Date,
   status: String,
   score: Number,
