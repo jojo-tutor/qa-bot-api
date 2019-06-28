@@ -11,6 +11,7 @@ const users = require('./services/user/route');
 const questions = require('./services/question/route');
 const tests = require('./services/test/route');
 const categories = require('./services/category/route');
+const results = require('./services/result/route');
 
 // connect db
 const dbOptions = { useNewUrlParser: true };
@@ -27,12 +28,22 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => res.send('hello world!'));
+app.get('/', (req, res) => res.send({
+  server_locale: new Date().toUTCString(),
+  available_endpoints: [
+    '/companies',
+    '/users',
+    '/questions',
+    '/tests',
+    '/categories',
+  ],
+}));
 
 app.use('/companies', companies);
 app.use('/users', users);
 app.use('/questions', questions);
 app.use('/tests', tests);
 app.use('/categories', categories);
+app.use('/results', results);
 
 module.exports = app;
