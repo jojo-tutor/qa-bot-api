@@ -5,7 +5,6 @@ const Question = new Schema({
   id: Schema.ObjectId,
   question: String,
   answer: String,
-  tags: Array,
 });
 
-module.exports = Question;
+module.exports = mongoose.model('Question', Question);

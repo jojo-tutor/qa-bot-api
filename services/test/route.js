@@ -1,45 +1,28 @@
 const express = require('express');
 
 const router = express.Router();
-const model = require('./model');
 
 let data = [
   {
     id: '1',
-    question: 'company 1',
+    question: 'question 1',
   },
   {
     id: '2',
-    question: 'company 2',
+    question: 'question 2',
   },
   {
     id: '3',
-    question: 'company 3',
+    question: 'question 3',
   },
   {
     id: '4',
-    question: 'company 4',
+    question: 'question 4',
   },
 ];
 
-router.get('/', async (req, res) => {
-  try {
-    const records = await model.find();
-    res.status(200).json(records);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json(error);
-  }
-});
-
-router.get('/:id', async (req, res) => {
-  try {
-    const record = await model.findById(req.params.id);
-    res.status(200).json(record);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json(error);
-  }
+router.get('/', (req, res) => {
+  res.status(200).json(data);
 });
 
 router.post('/', (req, res) => {
@@ -49,6 +32,11 @@ router.post('/', (req, res) => {
   };
   data.push(newItem);
   res.status(200).json(newItem);
+});
+
+router.get('/:id', (req, res) => {
+  const item = data.find(e => e.id === req.params.id) || {};
+  res.status(200).json(item);
 });
 
 router.put('/:id', (req, res) => {
