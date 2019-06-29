@@ -38,6 +38,8 @@ app.get('/', (req, res) => res.send({
     '/questions',
     '/tests',
     '/categories',
+    '/results',
+    '/skills',
   ],
 }));
 

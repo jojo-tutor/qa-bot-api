@@ -1,7 +1,20 @@
 const getCommonController = (Model, customControllers = {}) => {
-  const getRecords = customControllers.getRecords || (async () => {
+  const getRecords = customControllers.getRecords || (async (query) => {
+    const { limit = 10, skip = 0 } = query;
+    const options = {
+      limit: parseInt(limit, 10),
+      skip: parseInt(skip, 10),
+    };
+    const filters = {};
+    const fields = '';
     try {
-      const result = await Model.find();
+      const count = await Model.count();
+      const list = await Model.find(filters, fields, options);
+      const result = {
+        list,
+        count,
+        ...options,
+      };
       return { result };
     } catch (error) {
       console.error(error);

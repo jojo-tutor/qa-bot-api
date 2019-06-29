@@ -8,7 +8,7 @@ const getCommonRoute = (router, controller) => {
   } = controller;
 
   router.get('/', async (req, res) => {
-    const { result, error } = await getRecords();
+    const { result, error } = await getRecords(req.query);
     if (error) {
       res.status(404).json(error);
     } else {

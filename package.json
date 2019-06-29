@@ -5,7 +5,7 @@
   "author": "Jojo Tutor <jeshrave003@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon --watch app.js --watch services bin/www"
+    "dev": "nodemon --watch app.js --watch services --watch common bin/www"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
