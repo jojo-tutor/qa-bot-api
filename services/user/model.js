@@ -4,9 +4,19 @@ const { Schema } = mongoose;
 const User = new Schema({
   first_name: String,
   last_name: String,
+  password: String,
   company: {
     type: Schema.Types.ObjectId,
     ref: 'Company',
+  },
+  role: {
+    type: String,
+    enum: ['admin', 'user'],
+  },
+  status: {
+    type: String,
+    required: true,
+    enum: ['Active', 'Inactive', 'Unverified'],
   },
   email: {
     type: String,
@@ -19,10 +29,18 @@ const User = new Schema({
     },
     required: [true, 'Email is required'],
   },
-  role: {
+});
+
+const Password = new Schema({
+  email: {
     type: String,
-    enum: ['company_admin', 'user'],
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
   },
 });
 
 module.exports = mongoose.model('User', User);
+module.exports.Password = mongoose.model('Password', Password);

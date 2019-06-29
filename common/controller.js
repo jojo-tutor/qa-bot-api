@@ -63,6 +63,7 @@ const getCommonController = (Model, customControllers = {}) => {
   });
 
   return {
+    ...customControllers,
     getRecords,
     getRecord,
     createRecord,
