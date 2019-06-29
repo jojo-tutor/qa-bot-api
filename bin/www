@@ -55,6 +55,7 @@ function normalizePort(val) {
 
 function onError(error) {
   if (error.syscall !== 'listen') {
+    console.error(error);
     throw error;
   }
 
@@ -73,6 +74,7 @@ function onError(error) {
       process.exit(1);
       break;
     default:
+      console.error(error);
       throw error;
   }
 }
@@ -86,6 +88,5 @@ function onListening() {
   const bind = typeof addr === 'string'
     ? `pipe ${addr}`
     : `port ${addr.port}`;
-  debug(`Listening on ${bind}`);
-  console.log(`Listening on ${bind}`);
+  console.log(`Server listening on ${bind}`);
 }

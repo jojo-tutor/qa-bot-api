@@ -1,9 +1,11 @@
-require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
-
-// middlewares
 const bodyParser = require('body-parser');
+
+// set environment variables
+const envPath = path.resolve(process.cwd(), process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env');
+require('dotenv').config({ path: envPath });
 
 // local modules - routes
 const noauth = require('./services/noauth/route');
@@ -24,8 +26,8 @@ const { connection } = mongoose;
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
 mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`, dbOptions);
-connection.on('error', () => console.error('Not connected!'));
-connection.once('open', () => console.log('Connection successfull!'));
+connection.on('error', () => console.error('Database connection failed'));
+connection.once('open', () => console.log('Successfully connected to database'));
 
 const app = express();
 
