@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 // local modules - routes
-const auth = require('./services/auth/route');
+const noauth = require('./services/noauth/route');
 const companies = require('./services/company/route');
 const users = require('./services/user/route');
 const questions = require('./services/question/route');
@@ -44,7 +44,7 @@ const useAuth = async (req, res, next) => {
   return res.status(401).json({ error: 'Unauthorized.' });
 };
 
-app.use('/', auth);
+app.use('/', noauth);
 app.use('/companies', useAuth, companies);
 app.use('/users', useAuth, users);
 app.use('/questions', useAuth, questions);
