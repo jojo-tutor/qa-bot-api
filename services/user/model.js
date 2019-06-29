@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const User = new Schema({
+  company: {
+    type: Schema.Types.ObjectId,
+    ref: 'Company',
+  },
   first_name: String,
   last_name: {
     type: String,
