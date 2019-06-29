@@ -2,14 +2,11 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const User = new Schema({
+  first_name: String,
+  last_name: String,
   company: {
     type: Schema.Types.ObjectId,
     ref: 'Company',
-  },
-  first_name: String,
-  last_name: {
-    type: String,
-    required: true,
   },
   email: {
     type: String,

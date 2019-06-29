@@ -12,10 +12,12 @@ const questions = require('./services/question/route');
 const tests = require('./services/test/route');
 const categories = require('./services/category/route');
 const results = require('./services/result/route');
+const skills = require('./services/skill/route');
 
 // connect db
 const dbOptions = { useNewUrlParser: true };
 const { connection } = mongoose;
+mongoose.set('useFindAndModify', false);
 mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`, dbOptions);
 connection.on('error', () => console.error('Not connected!'));
 connection.once('open', () => console.log('Connection successfull!'));
@@ -45,5 +47,6 @@ app.use('/questions', questions);
 app.use('/tests', tests);
 app.use('/categories', categories);
 app.use('/results', results);
+app.use('/skills', skills);
 
 module.exports = app;

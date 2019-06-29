@@ -1,8 +1,9 @@
-const model = require('./model');
+const Model = require('./model');
 const getCommonController = require('../../common/controller');
 
-const controller = getCommonController(model);
-
 // custom or override controller below
+const customControllers = {};
+
+const controller = getCommonController(Model, customControllers);
 
 module.exports = controller;
