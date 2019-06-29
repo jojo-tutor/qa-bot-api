@@ -17,17 +17,16 @@ const categories = require('./services/category/route');
 const results = require('./services/result/route');
 const skills = require('./services/skill/route');
 
-// utils
+// local modules - utils
 const { checkAuth } = require('./common/utils');
 
-// connect db
+// db stuff
 const dbOptions = { useNewUrlParser: true };
-const { connection } = mongoose;
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
-mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`, dbOptions);
-connection.on('error', () => console.error('Database connection failed'));
-connection.once('open', () => console.log('Successfully connected to database'));
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`, dbOptions)
+  .then(() => console.log('Successfully connected to database'))
+  .catch(() => console.error('Database connection failed'));
 
 const app = express();
 
@@ -43,10 +42,19 @@ const useAuth = async (req, res, next) => {
   if (isValid) {
     return next();
   }
-  return res.status(401).json({ error: 'Unauthorized.' });
+  return res.status(401).json({ error: 'Authentication failed.' });
 };
 
-app.use('/', noauth);
+// db middleware
+const useDbCheck = (req, res, next) => {
+  if (mongoose.connection.readyState) {
+    return next();
+  }
+  console.error('Database connection failed');
+  return res.status(500).json({ error: 'Database connection failed' });
+};
+
+app.use('/', useDbCheck, noauth);
 app.use('/companies', useAuth, companies);
 app.use('/users', useAuth, users);
 app.use('/questions', useAuth, questions);
