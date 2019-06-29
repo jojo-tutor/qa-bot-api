@@ -13,7 +13,6 @@ const customControllers = {
         .populate('questions');
       return { result };
     } catch (error) {
-      logger.error(error);
       return { error };
     }
   },

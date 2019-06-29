@@ -16,19 +16,19 @@ router.get('/', (req, res) => res.status(200).json({
   ],
 }));
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', async (req, res, next) => {
   const { result, error } = await controller.signup(req.body);
   if (error) {
-    res.status(404).json(error);
+    next(error);
   } else {
     res.status(200).json(result);
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
   const { result, error } = await controller.login(req.body);
   if (error) {
-    res.status(404).json(error);
+    next(error);
   } else {
     res.status(200).json(result);
   }

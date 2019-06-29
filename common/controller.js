@@ -17,8 +17,7 @@ const getCommonController = (Model, customControllers = {}) => {
       };
       return { result };
     } catch (error) {
-      console.error(error);
-      return { error: true };
+      return { error };
     }
   });
 
@@ -27,7 +26,6 @@ const getCommonController = (Model, customControllers = {}) => {
       const result = await Model.findById(id);
       return { result };
     } catch (error) {
-      console.error(error);
       return { error };
     }
   });
@@ -37,7 +35,6 @@ const getCommonController = (Model, customControllers = {}) => {
       const createdRecord = await Model.create(data);
       return await getRecord(createdRecord.id);
     } catch (error) {
-      console.error(error);
       return { error };
     }
   });
@@ -47,7 +44,6 @@ const getCommonController = (Model, customControllers = {}) => {
       const updatedRecord = await Model.findByIdAndUpdate(id, data, { new: true, runValidators: true }); // eslint-disable-line
       return await getRecord(updatedRecord.id);
     } catch (error) {
-      console.error(error);
       return { error };
     }
   });
@@ -57,7 +53,6 @@ const getCommonController = (Model, customControllers = {}) => {
       const result = await Model.findByIdAndDelete(id);
       return { result };
     } catch (error) {
-      console.error(error);
       return { error };
     }
   });

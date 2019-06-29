@@ -10,7 +10,6 @@ const customControllers = {
       const result = await Model.findById(id, '-password').populate('company');
       return { result };
     } catch (error) {
-      logger.error(error);
       return { error };
     }
   },
@@ -32,7 +31,6 @@ const customControllers = {
       };
       return { result };
     } catch (error) {
-      logger.error(error);
       return { error };
     }
   },

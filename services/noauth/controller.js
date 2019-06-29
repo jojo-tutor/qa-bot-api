@@ -27,7 +27,7 @@ const customControllers = {
       // get user
       const user = await Model.findOne({ email: data.email });
       if (!user) {
-        throw Error('Invalid email or password');
+        throw new Error('Invalid email or password');
       }
 
       // compare passwords
@@ -35,7 +35,7 @@ const customControllers = {
         .compare(data.password, user.password)
         .then((valid) => {
           if (!valid) {
-            throw Error('Invalid email or password');
+            throw new Error('Invalid email or password');
           }
         });
 
@@ -48,7 +48,6 @@ const customControllers = {
       };
       return { result };
     } catch (error) {
-      logger.error(error);
       return { error };
     }
   },

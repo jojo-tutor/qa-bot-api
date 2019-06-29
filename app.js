@@ -45,7 +45,7 @@ const useAuth = async (req, res, next) => {
   if (isValid) {
     return next();
   }
-  return res.status(401).json({ error: 'Authentication failed.' });
+  return res.status(401).json({ message: 'Authentication failed' });
 };
 
 // db middleware
@@ -54,7 +54,7 @@ const useDbCheck = (req, res, next) => {
     return next();
   }
   logger.error('Database connection failed');
-  return res.status(500).json({ error: 'Database connection failed' });
+  return res.status(500).json({ message: 'Database connection failed' });
 };
 
 app.use('/', useDbCheck, noauth);
@@ -66,9 +66,20 @@ app.use('/categories', useAuth, categories);
 app.use('/results', useAuth, results);
 app.use('/skills', useAuth, skills);
 
-// endpoint not found
+// error logger middleware
+app.use((error, req, res, next) => {
+  logger.error(error);
+  next(error);
+});
+
+// error handler middleware
+app.use((error, req, res, next) => { // eslint-disable-line
+  res.status(500).json({ message: error.message, code: error.name });
+});
+
+// 404 handler middleware
 app.use((req, res) => {
-  res.status(404).json({ error: 'Endpoint not found.' });
+  res.status(404).json({ message: 'Endpoint not found.' });
 });
 
 module.exports = app;
