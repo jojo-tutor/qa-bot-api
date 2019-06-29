@@ -5,15 +5,6 @@ const getCommonRoute = require('../../common/route');
 const router = express.Router();
 
 // custom or route below
-router.post('/login', async (req, res) => {
-  const { result, error } = await controller.login(req.body);
-  if (error) {
-    res.status(404).json(error);
-  } else {
-    res.status(200).json(result);
-  }
-});
-
 router.put('/change-password', async (req, res) => {
   const { result, error } = await controller.changePassword(req.body);
   if (error) {

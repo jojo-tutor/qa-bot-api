@@ -20,6 +20,8 @@ const User = new Schema({
   },
   email: {
     type: String,
+    dropDups: true,
+    index: { unique: true },
     validate: {
       validator(email) {
         const regEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -29,6 +31,10 @@ const User = new Schema({
     },
     required: [true, 'Email is required'],
   },
+});
+
+User.pre('find', function preFind() {
+  this.select('-password');
 });
 
 const Password = new Schema({

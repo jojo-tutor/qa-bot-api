@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 // local modules - routes
+const auth = require('./services/auth/route');
 const companies = require('./services/company/route');
 const users = require('./services/user/route');
 const questions = require('./services/question/route');
@@ -14,9 +15,13 @@ const categories = require('./services/category/route');
 const results = require('./services/result/route');
 const skills = require('./services/skill/route');
 
+// utils
+const { checkAuth } = require('./common/utils');
+
 // connect db
 const dbOptions = { useNewUrlParser: true };
 const { connection } = mongoose;
+mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
 mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`, dbOptions);
 connection.on('error', () => console.error('Not connected!'));
@@ -30,26 +35,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => res.send({
-  server_locale: new Date().toUTCString(),
-  available_endpoints: [
-    '/companies',
-    '/users',
-    '/questions',
-    '/tests',
-    '/categories',
-    '/results',
-    '/skills',
-  ],
-}));
+// auth middleware
+const useAuth = async (req, res, next) => {
+  const isValid = await checkAuth(req.headers.authorization);
+  if (isValid) {
+    return next();
+  }
+  return res.status(401).json({ error: 'Unauthorized.' });
+};
 
-app.use('/companies', companies);
-app.use('/users', users);
-app.use('/questions', questions);
-app.use('/tests', tests);
-app.use('/categories', categories);
-app.use('/results', results);
-app.use('/skills', skills);
+app.use('/', auth);
+app.use('/companies', useAuth, companies);
+app.use('/users', useAuth, users);
+app.use('/questions', useAuth, questions);
+app.use('/tests', useAuth, tests);
+app.use('/categories', useAuth, categories);
+app.use('/results', useAuth, results);
+app.use('/skills', useAuth, skills);
 
 // endpoint not found
 app.use((req, res) => {
