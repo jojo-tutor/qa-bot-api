@@ -7,6 +7,9 @@ const bodyParser = require('body-parser');
 const envPath = path.resolve(process.cwd(), process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env');
 require('dotenv').config({ path: envPath });
 
+// local modules - logger
+const logger = require('./common/logger');
+
 // local modules - routes
 const noauth = require('./services/noauth/route');
 const companies = require('./services/company/route');
@@ -25,8 +28,8 @@ const dbOptions = { useNewUrlParser: true };
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
 mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`, dbOptions)
-  .then(() => console.log('Successfully connected to database'))
-  .catch(() => console.error('Database connection failed'));
+  .then(() => logger.info('Successfully connected to database'))
+  .catch(() => logger.error('Database connection failed'));
 
 const app = express();
 
@@ -50,7 +53,7 @@ const useDbCheck = (req, res, next) => {
   if (mongoose.connection.readyState) {
     return next();
   }
-  console.error('Database connection failed');
+  logger.error('Database connection failed');
   return res.status(500).json({ error: 'Database connection failed' });
 };
 

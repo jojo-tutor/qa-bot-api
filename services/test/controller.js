@@ -1,4 +1,5 @@
 const Model = require('./model');
+const logger = require('../../common/logger');
 const getCommonController = require('../../common/controller');
 
 // custom or override controller below
@@ -12,7 +13,7 @@ const customControllers = {
         .populate('questions');
       return { result };
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       return { error };
     }
   },

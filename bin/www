@@ -4,9 +4,9 @@
  * Module dependencies.
  */
 
-const debug = require('debug')('q-and-a:server');
 const http = require('http');
 const app = require('../app');
+const logger = require('../common/logger');
 
 /**
  * Get port from environment and store in Express.
@@ -55,7 +55,7 @@ function normalizePort(val) {
 
 function onError(error) {
   if (error.syscall !== 'listen') {
-    console.error(error);
+    logger.error(error);
     throw error;
   }
 
@@ -66,15 +66,15 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(`${bind} requires elevated privileges`);
+      logger.error(`${bind} requires elevated privileges`);
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(`${bind} is already in use`);
+      logger.error(`${bind} is already in use`);
       process.exit(1);
       break;
     default:
-      console.error(error);
+      logger.error(error);
       throw error;
   }
 }
@@ -88,5 +88,5 @@ function onListening() {
   const bind = typeof addr === 'string'
     ? `pipe ${addr}`
     : `port ${addr.port}`;
-  console.log(`Server listening on ${bind}`);
+  logger.info(`Server listening on ${bind}`);
 }

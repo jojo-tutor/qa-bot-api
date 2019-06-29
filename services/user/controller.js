@@ -1,4 +1,5 @@
 const Model = require('./model');
+const logger = require('../../common/logger');
 const getCommonController = require('../../common/controller');
 const { hashPassword } = require('../../common/utils');
 
@@ -9,7 +10,7 @@ const customControllers = {
       const result = await Model.findById(id, '-password').populate('company');
       return { result };
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       return { error };
     }
   },
@@ -31,7 +32,7 @@ const customControllers = {
       };
       return { result };
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       return { error };
     }
   },
