@@ -8,7 +8,7 @@ const getCommonController = (Model, customControllers = {}) => {
     const filters = {};
     const fields = '';
     try {
-      const count = await Model.count();
+      const count = await Model.countDocuments();
       const list = await Model.find(filters, fields, options);
       const result = {
         list,

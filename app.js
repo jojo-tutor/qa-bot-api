@@ -51,4 +51,9 @@ app.use('/categories', categories);
 app.use('/results', results);
 app.use('/skills', skills);
 
+// endpoint not found
+app.use((req, res) => {
+  res.status(404).json({ error: 'Endpoint not found.' });
+});
+
 module.exports = app;
