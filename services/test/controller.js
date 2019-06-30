@@ -1,5 +1,4 @@
 const Model = require('./model');
-const logger = require('../../common/logger');
 const getCommonController = require('../../common/controller');
 
 // custom or override controller below

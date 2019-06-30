@@ -10,6 +10,9 @@ require('dotenv').config({ path: envPath });
 // local modules - logger
 const logger = require('./common/logger');
 
+// error
+const AppError = require('./common/error');
+
 // local modules - routes
 const noauth = require('./services/noauth/route');
 const companies = require('./services/company/route');
@@ -21,7 +24,7 @@ const results = require('./services/result/route');
 const skills = require('./services/skill/route');
 
 // local modules - utils
-const { checkAuth } = require('./common/utils');
+const { checkAuth, getStatusCode } = require('./common/utils');
 
 // db stuff
 const dbOptions = { useNewUrlParser: true };
@@ -45,7 +48,7 @@ const useAuth = async (req, res, next) => {
   if (isValid) {
     return next();
   }
-  return res.status(401).json({ message: 'Authentication failed' });
+  return next(new AppError('AuthError', 401, 'Authentication failed', true));
 };
 
 // db middleware
@@ -53,8 +56,7 @@ const useDbCheck = (req, res, next) => {
   if (mongoose.connection.readyState) {
     return next();
   }
-  logger.error('Database connection failed');
-  return res.status(500).json({ message: 'Database connection failed' });
+  return next(new AppError('DBError', 500, 'Database connection failed', true));
 };
 
 app.use('/', useDbCheck, noauth);
@@ -66,6 +68,9 @@ app.use('/categories', useAuth, categories);
 app.use('/results', useAuth, results);
 app.use('/skills', useAuth, skills);
 
+// 404 handler middleware
+app.use((req, res, next) => next(new AppError('NotFoundError', 404, 'Endpoint not found', true)));
+
 // error logger middleware
 app.use((error, req, res, next) => {
   logger.error(error);
@@ -74,12 +79,11 @@ app.use((error, req, res, next) => {
 
 // error handler middleware
 app.use((error, req, res, next) => { // eslint-disable-line
-  res.status(500).json({ message: error.message, code: error.name });
-});
-
-// 404 handler middleware
-app.use((req, res) => {
-  res.status(404).json({ message: 'Endpoint not found.' });
+  const status = getStatusCode(error);
+  res.status(status).json({
+    name: error.name,
+    message: error.message,
+  });
 });
 
 module.exports = app;

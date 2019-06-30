@@ -15,7 +15,14 @@
         "sourceType": "module"
     },
     "rules": {
-        "no-console": "off"
+        "no-console": "off",
+        "no-restricted-globals": [
+            "off",
+            {
+                "name": "isNaN",
+                "message": "Use local parameter instead."
+            }
+        ]
     },
     "settings": {
         "import/resolver": {

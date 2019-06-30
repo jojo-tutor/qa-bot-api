@@ -1,5 +1,4 @@
 const Model = require('./model');
-const logger = require('../../common/logger');
 const getCommonController = require('../../common/controller');
 const { hashPassword } = require('../../common/utils');
 

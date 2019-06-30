@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const logger = require('../../common/logger');
 const Model = require('../user/model');
+const AppError = require('../../common/error');
 const getCommonController = require('../../common/controller');
 const { hashPassword } = require('../../common/utils');
 
@@ -13,7 +13,6 @@ const customControllers = {
       const result = await Model.create({ ...data, password: passwordHash });
       return { result };
     } catch (error) {
-      logger.error(error);
       return { error };
     }
   },
@@ -27,7 +26,7 @@ const customControllers = {
       // get user
       const user = await Model.findOne({ email: data.email });
       if (!user) {
-        throw new Error('Invalid email or password');
+        throw new AppError(null, 400, 'Invalid email or password', true);
       }
 
       // compare passwords
@@ -35,7 +34,7 @@ const customControllers = {
         .compare(data.password, user.password)
         .then((valid) => {
           if (!valid) {
-            throw new Error('Invalid email or password');
+            throw new AppError(null, 400, 'Invalid email or password', true);
           }
         });
 
