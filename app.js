@@ -5,6 +5,7 @@ require('dotenv').config({ path: envPath });
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const swaggerUi = require('swagger-ui-express');
 
 // local modules - logger
 const logger = require('./common/logger');
@@ -14,6 +15,9 @@ const AppError = require('./common/error');
 
 // local modules - utils
 const { checkToken, getStatusCode } = require('./common/utils');
+
+// local file - swagger
+const swaggerDocument = require('./swagger.json');
 
 // local modules - routes
 const noauth = require('./services/noauth/route');
@@ -65,6 +69,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// app routes
 app.use('/', checkDB, noauth);
 app.use('/companies', checkAuth, companies);
 app.use('/users', checkAuth, users);
@@ -73,6 +78,9 @@ app.use('/tests', checkAuth, tests);
 app.use('/categories', checkAuth, categories);
 app.use('/results', checkAuth, results);
 app.use('/skills', checkAuth, skills);
+
+// swagger
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { showExplorer: true }));
 
 // 404 handler middleware
 app.use((req, res, next) => next(new AppError('NotFoundError', 404, 'Endpoint not found', true)));

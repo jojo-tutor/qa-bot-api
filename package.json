@@ -5,7 +5,7 @@
   "author": "Jojo Tutor <jeshrave003@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon --watch app.js --watch services --watch common bin/www",
+    "dev": "nodemon --watch app.js --watch swagger.json --watch services --watch common bin/www",
     "start": "cross-env NODE_ENV=production node bin/www"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "lodash": "^4.17.11",
     "mongoose": "^5.6.1",
     "mongoose-unique-validator": "^2.0.3",
+    "swagger-ui-express": "^4.0.6",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.9.0"
   },
