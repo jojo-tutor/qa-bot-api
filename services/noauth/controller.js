@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const logger = require('../../common/logger');
 const Model = require('../user/model');
 const AppError = require('../../common/error');
 const getCommonController = require('../../common/controller');
@@ -46,6 +47,32 @@ const customControllers = {
         user,
       };
       return { result };
+    } catch (error) {
+      return { error };
+    }
+  },
+
+  async getLogs(data) {
+    // Find items logged between today and yesterday only
+    try {
+      const options = {
+        from: new Date() - (24 * 60 * 60 * 1000),
+        until: new Date(),
+        limit: 10,
+        start: 0,
+        order: 'desc',
+        ...data,
+      };
+
+      return new Promise((resolve, reject) => {
+        logger.query(options, (error, result) => {
+          if (error) {
+            reject(new AppError('LoggerQueryError', 400, error.message, true));
+          }
+
+          resolve({ result });
+        });
+      });
     } catch (error) {
       return { error };
     }
