@@ -25,6 +25,15 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
+router.get('/signup/validate', async (req, res, next) => {
+  const { result, error } = await controller.validateSignup(req.query);
+  if (error) {
+    next(error);
+  } else {
+    res.status(200).json(result);
+  }
+});
+
 router.post('/login', async (req, res, next) => {
   const { result, error } = await controller.login(req.body);
   if (error) {

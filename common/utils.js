@@ -1,15 +1,19 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const startCase = require('lodash/startCase');
+const AppError = require('./error');
 
 const hashPassword = password => bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS, 10));
 
-const checkAuth = async (token) => {
+const generateToken = email => jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRY }); // eslint-disable-line
+
+const checkToken = async (token = '') => {
   try {
-    const [, encoded] = token.split(' ');
-    const decoded = await jwt.verify(encoded, process.env.JWT_SECRET);
-    return decoded;
+    const [, encoded = ''] = token.split(' ');
+    const result = await jwt.verify(encoded, process.env.JWT_SECRET);
+    return { result };
   } catch (error) {
-    return false;
+    return { error: new AppError(error.name, 401, startCase(error.message), true) };
   }
 };
 
@@ -26,6 +30,7 @@ const getStatusCode = (error) => {
 
 module.exports = {
   hashPassword,
-  checkAuth,
+  generateToken,
+  checkToken,
   getStatusCode,
 };

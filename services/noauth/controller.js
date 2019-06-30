@@ -1,10 +1,10 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const logger = require('../../common/logger');
 const Model = require('../user/model');
 const AppError = require('../../common/error');
 const getCommonController = require('../../common/controller');
-const { hashPassword } = require('../../common/utils');
+const { hashPassword, generateToken, checkToken } = require('../../common/utils');
+const mailer = require('../../common/mailer');
 
 // custom or override controller below
 const customControllers = {
@@ -12,6 +12,41 @@ const customControllers = {
     try {
       const passwordHash = await hashPassword(data.password);
       const result = await Model.create({ ...data, password: passwordHash });
+      const token = await generateToken(result.email);
+      await mailer({ to: result.email, token });
+      return { result };
+    } catch (error) {
+      return { error };
+    }
+  },
+
+  async validateSignup(data) {
+    try {
+      // check token
+      const { result: decoded, error } = await checkToken(`Bearer ${data.token}`);
+
+      // if invalid, throw error and do not proceed
+      if (error) {
+        throw new AppError(error.name, 400, error.message, true);
+      }
+
+      // get user using email
+      const user = await Model.findOneAndUpdate(
+        { email: decoded.email },
+        { status: 'Active' },
+        { new: true, runValidators: true },
+      );
+      if (!user) {
+        throw new AppError('AccountNotFoundError', 400, 'Cannot find account associated with this token', true);
+      }
+
+      // generate user token, like logged in
+      const token = await generateToken(data.email);
+
+      const result = {
+        token,
+        user,
+      };
       return { result };
     } catch (error) {
       return { error };
@@ -27,7 +62,7 @@ const customControllers = {
       // get user
       const user = await Model.findOne({ email: data.email });
       if (!user) {
-        throw new AppError(null, 400, 'Invalid email or password', true);
+        throw new AppError(null, 400, 'Invalid email and/or password', true);
       }
 
       // compare passwords
@@ -35,12 +70,12 @@ const customControllers = {
         .compare(data.password, user.password)
         .then((valid) => {
           if (!valid) {
-            throw new AppError(null, 400, 'Invalid email or password', true);
+            throw new AppError(null, 400, 'Invalid email and/or password', true);
           }
         });
 
       // user token
-      const token = await jwt.sign({ email: data.email }, process.env.JWT_SECRET);
+      const token = await generateToken(data.email);
 
       const result = {
         token,

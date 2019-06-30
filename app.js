@@ -24,7 +24,7 @@ const results = require('./services/result/route');
 const skills = require('./services/skill/route');
 
 // local modules - utils
-const { checkAuth, getStatusCode } = require('./common/utils');
+const { checkToken, getStatusCode } = require('./common/utils');
 
 // db stuff
 const dbOptions = { useNewUrlParser: true };
@@ -44,11 +44,11 @@ app.use(bodyParser.json());
 
 // auth middleware
 const useAuth = async (req, res, next) => {
-  const isValid = await checkAuth(req.headers.authorization);
-  if (isValid) {
-    return next();
+  const { error } = await checkToken(req.headers.authorization);
+  if (error) {
+    return next(error);
   }
-  return next(new AppError('AuthError', 401, 'Authentication failed', true));
+  return next();
 };
 
 // db middleware
