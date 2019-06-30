@@ -9,7 +9,6 @@ const checkAuth = async (token) => {
     const decoded = await jwt.verify(encoded, process.env.JWT_SECRET);
     return decoded;
   } catch (error) {
-    console.error(error);
     return false;
   }
 };

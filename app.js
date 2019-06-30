@@ -31,8 +31,8 @@ const dbOptions = { useNewUrlParser: true };
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
 mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`, dbOptions)
-  .then(() => logger.info('Successfully connected to database'))
-  .catch(() => logger.error('Database connection failed'));
+  .then(() => logger.info('Successfully connected to database', 'mongoose'))
+  .catch(() => logger.error('Database connection failed', 'mongoose'));
 
 const app = express();
 
@@ -59,6 +59,12 @@ const useDbCheck = (req, res, next) => {
   return next(new AppError('DBError', 500, 'Database connection failed', true));
 };
 
+// incoming request logger middleware
+app.use((req, res, next) => {
+  logger.info('Incoming request', req.originalUrl);
+  next();
+});
+
 app.use('/', useDbCheck, noauth);
 app.use('/companies', useAuth, companies);
 app.use('/users', useAuth, users);
@@ -73,7 +79,7 @@ app.use((req, res, next) => next(new AppError('NotFoundError', 404, 'Endpoint no
 
 // error logger middleware
 app.use((error, req, res, next) => {
-  logger.error(error);
+  logger.error(error, req.originalUrl);
   next(error);
 });
 
