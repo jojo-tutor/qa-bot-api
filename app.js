@@ -61,7 +61,7 @@ const useDbCheck = (req, res, next) => {
 
 // incoming request logger middleware
 app.use((req, res, next) => {
-  logger.info('Incoming request', req.originalUrl);
+  logger.info('Incoming request', req.path);
   next();
 });
 
@@ -79,7 +79,7 @@ app.use((req, res, next) => next(new AppError('NotFoundError', 404, 'Endpoint no
 
 // error logger middleware
 app.use((error, req, res, next) => {
-  logger.error(error, req.originalUrl);
+  logger.error(error, req.path);
   next(error);
 });
 
