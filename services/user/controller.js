@@ -16,8 +16,7 @@ const customControllers = {
   async changePassword(data) {
     try {
       // check required fields
-      const password = new Model.Password(data);
-      await password.validate();
+      await new Model.Password(data).validate();
 
       // hash password
       const passwordHash = await hashPassword(data.password);

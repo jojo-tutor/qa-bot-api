@@ -56,8 +56,7 @@ const customControllers = {
   async login(data) {
     try {
       // check required fields
-      const password = new Model.Password(data);
-      await password.validate();
+      await new Model.Password(data).validate();
 
       // get user
       const user = await Model.findOne({ email: data.email });

@@ -7,8 +7,7 @@ const customControllers = {
   async createRecord(data) {
     try {
       // validate user
-      const user = new UserModel(data);
-      await user.validate();
+      await new UserModel(data).validate();
 
       // create company
       const createdCompany = await Model.create(data);
