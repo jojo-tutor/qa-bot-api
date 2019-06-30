@@ -1,17 +1,19 @@
-const path = require('path');
+// set environment variables
+const envPath = require('path').resolve(process.cwd(), process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env');
+require('dotenv').config({ path: envPath });
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-// set environment variables
-const envPath = path.resolve(process.cwd(), process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env');
-require('dotenv').config({ path: envPath });
-
 // local modules - logger
 const logger = require('./common/logger');
 
-// error
+// local modules - custom error
 const AppError = require('./common/error');
+
+// local modules - utils
+const { checkToken, getStatusCode } = require('./common/utils');
 
 // local modules - routes
 const noauth = require('./services/noauth/route');
@@ -23,9 +25,6 @@ const categories = require('./services/category/route');
 const results = require('./services/result/route');
 const skills = require('./services/skill/route');
 
-// local modules - utils
-const { checkToken, getStatusCode } = require('./common/utils');
-
 // db stuff
 const dbOptions = { useNewUrlParser: true };
 mongoose.set('useCreateIndex', true);
@@ -34,6 +33,7 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${
   .then(() => logger.info('Successfully connected to database', 'mongoose'))
   .catch(() => logger.error('Database connection failed', 'mongoose'));
 
+// express
 const app = express();
 
 // parse application/x-www-form-urlencoded
@@ -42,8 +42,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-// auth middleware
-const useAuth = async (req, res, next) => {
+// jwt auth middleware
+const checkAuth = async (req, res, next) => {
   const { error } = await checkToken(req.headers.authorization);
   if (error) {
     return next(error);
@@ -52,7 +52,7 @@ const useAuth = async (req, res, next) => {
 };
 
 // db middleware
-const useDbCheck = (req, res, next) => {
+const checkDB = (req, res, next) => {
   if (mongoose.connection.readyState) {
     return next();
   }
@@ -65,14 +65,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', useDbCheck, noauth);
-app.use('/companies', useAuth, companies);
-app.use('/users', useAuth, users);
-app.use('/questions', useAuth, questions);
-app.use('/tests', useAuth, tests);
-app.use('/categories', useAuth, categories);
-app.use('/results', useAuth, results);
-app.use('/skills', useAuth, skills);
+app.use('/', checkDB, noauth);
+app.use('/companies', checkAuth, companies);
+app.use('/users', checkAuth, users);
+app.use('/questions', checkAuth, questions);
+app.use('/tests', checkAuth, tests);
+app.use('/categories', checkAuth, categories);
+app.use('/results', checkAuth, results);
+app.use('/skills', checkAuth, skills);
 
 // 404 handler middleware
 app.use((req, res, next) => next(new AppError('NotFoundError', 404, 'Endpoint not found', true)));
