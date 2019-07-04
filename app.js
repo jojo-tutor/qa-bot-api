@@ -6,11 +6,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const bcrypt = require('bcrypt');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
 
 // local modules - logger
 const logger = require('./common/logger');
@@ -19,7 +15,7 @@ const logger = require('./common/logger');
 const AppError = require('./common/error');
 
 // local modules - utils
-const { checkToken, getStatusCode } = require('./common/utils');
+const { getStatusCode } = require('./common/utils');
 
 // local file - swagger
 const swaggerDocument = require('./swagger.json');
@@ -74,15 +70,6 @@ app.use(sessionMiddleware);
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-// // jwt auth middleware
-// const checkAuth = async (req, res, next) => {
-//   const { error } = await checkToken(req.headers.authorization);
-//   if (error) {
-//     return next(error);
-//   }
-//   return next();
-// };
 
 const checkAuth = async (req, res, next) => {
   if (req.isAuthenticated()) {
