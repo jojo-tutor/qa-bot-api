@@ -9,7 +9,7 @@
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "host": "localhost:3000",
+  "host": "localhost:9000",
   "basePath": "/",
   "tags": [
     {
@@ -31,10 +31,10 @@
     "application/json"
   ],
   "securityDefinitions": {
-    "jwt": {
+    "cookieAuth": {
       "type": "apiKey",
-      "in": "header",
-      "name": "Authorization"
+      "in": "cookie",
+      "name": "connect.sid"
     }
   },
   "paths": {
@@ -78,7 +78,7 @@
         ],
         "security": [
           {
-            "jwt": []
+            "cookieAuth" : []
           }
         ],
         "parameters": [
@@ -110,7 +110,7 @@
         ],
         "security": [
           {
-            "jwt": []
+            "cookieAuth" : []
           }
         ],
         "summary": "Get all users in system",
@@ -140,7 +140,7 @@
         ],
         "security": [
           {
-            "jwt": []
+            "cookieAuth" : []
           }
         ],
         "summary": "Get user with given ID",
@@ -160,7 +160,7 @@
         ],
         "security": [
           {
-            "jwt": []
+            "cookieAuth" : []
           }
         ],
         "responses": {
@@ -179,7 +179,7 @@
         ],
         "security": [
           {
-            "jwt": []
+            "cookieAuth" : []
           }
         ],
         "parameters": [
@@ -201,28 +201,140 @@
           }
         }
       }
-    }
-  },
-  "definitions": {
-    "User": {
-      "required": [
-        "email",
-        "_id"
-      ],
-      "properties": {
-        "_id": {
-          "type": "string",
-          "uniqueItems": true
-        },
-        "email": {
-          "type": "string",
-          "uniqueItems": true
-        },
-        "status": {
-          "type": "string"
+    },
+    "/companies": {
+      "post": {
+        "tags": [
+          "Companies"
+        ],
+        "security": [
+          {
+            "cookieAuth" : []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company",
+            "in": "body",
+            "description": "User that we want to create",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "description": "Create new company in system",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New company is created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "security": [
+          {
+            "cookieAuth" : []
+          }
+        ],
+        "summary": "Get all companies in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Companies"
+            }
+          }
         }
       }
     },
+    "/companies/{companyId}": {
+      "parameters": [
+        {
+          "name": "companyId",
+          "in": "path",
+          "required": true,
+          "description": "ID of company that we want to find",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "security": [
+          {
+            "cookieAuth" : []
+          }
+        ],
+        "summary": "Get company with given ID",
+        "responses": {
+          "200": {
+            "description": "User is found",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete company with given ID",
+        "tags": [
+          "Companies"
+        ],
+        "security": [
+          {
+            "cookieAuth" : []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User is deleted",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update company with give ID",
+        "tags": [
+          "Companies"
+        ],
+        "security": [
+          {
+            "cookieAuth" : []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company",
+            "in": "body",
+            "description": "User with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User is updated",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
     "Login": {
       "required": [
         "email",
@@ -238,9 +350,45 @@
         }
       }
     },
+    "User": {
+      "required": [
+        "email",
+        "_id"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "Company": {
+      "required": [
+        "name",
+        "email",
+        "_id"
+      ],
+      "properties": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "email": {
+          "type": "string",
+          "uniqueItems": true
+        }
+      }
+    },
     "Users": {
       "type": "array",
       "$ref": "#/definitions/User"
+    },
+    "Companies": {
+      "type": "array",
+      "$ref": "#/definitions/Company"
     }
   }
 }

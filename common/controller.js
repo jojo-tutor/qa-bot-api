@@ -41,7 +41,7 @@ const getCommonController = (Model, customControllers = {}) => {
 
   const updateRecord = customControllers.updateRecord || (async (id, data) => {
     try {
-      const updatedRecord = await Model.findByIdAndUpdate(id, data, { new: true, runValidators: true }); // eslint-disable-line
+      const updatedRecord = await Model.findByIdAndUpdate(id, data, { new: true, runValidators: true, context: 'query' }); // eslint-disable-line
       return await getRecord(updatedRecord.id);
     } catch (error) {
       return { error };

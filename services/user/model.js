@@ -22,7 +22,8 @@ const User = new Schema({
   email: {
     type: String,
     dropDups: true,
-    index: { unique: true },
+    unique: true,
+    required: true,
     validate: {
       validator(email) {
         const regEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -30,7 +31,6 @@ const User = new Schema({
       },
       message: ({ value }) => `${value} is not a valid email!`,
     },
-    required: [true, 'Email is required'],
   },
 });
 
