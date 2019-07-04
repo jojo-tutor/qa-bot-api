@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const logger = require('../../common/logger');
-const Model = require('../user/model');
+const UserModel = require('../user/model');
 const AppError = require('../../common/error');
 const getCommonController = require('../../common/controller');
 const { hashPassword, generateToken, checkToken } = require('../../common/utils');
@@ -11,7 +11,7 @@ const customControllers = {
   async signup(data) {
     try {
       const passwordHash = await hashPassword(data.password);
-      const result = await Model.create({ ...data, password: passwordHash });
+      const result = await UserModel.create({ ...data, password: passwordHash });
       const token = await generateToken(result.email);
       await mailer({ to: result.email, token });
       return { result };
@@ -31,7 +31,7 @@ const customControllers = {
       }
 
       // get user using email
-      const user = await Model.findOneAndUpdate(
+      const user = await UserModel.findOneAndUpdate(
         { email: decoded.email },
         { status: 'Active' },
         { new: true, runValidators: true },
@@ -56,10 +56,10 @@ const customControllers = {
   async login(data) {
     try {
       // check required fields
-      await new Model.Password(data).validate();
+      await new UserModel.Password(data).validate();
 
       // get user
-      const user = await Model.findOne({ email: data.email });
+      const user = await UserModel.findOne({ email: data.email });
       if (!user) {
         throw new AppError(null, 400, 'Invalid email and/or password', true);
       }
@@ -113,6 +113,6 @@ const customControllers = {
   },
 };
 
-const controller = getCommonController(Model, customControllers);
+const controller = getCommonController(UserModel, customControllers);
 
 module.exports = controller;

@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 const controller = require('./controller');
 
 const router = express.Router();
@@ -34,14 +35,15 @@ router.get('/signup/validate', async (req, res, next) => {
   }
 });
 
-router.post('/login', async (req, res, next) => {
-  const { result, error } = await controller.login(req.body);
-  if (error) {
-    next(error);
-  } else {
-    res.status(200).json(result);
-  }
-});
+// router.post('/login', async (req, res, next) => {
+//   const { result, error } = await controller.login(req.body);
+//   if (error) {
+//     next(error);
+//   } else {
+//     res.status(200).json(result);
+//   }
+// });
+
 
 router.get('/logs', async (req, res, next) => {
   const { result, error } = await controller.getLogs(req.query);
