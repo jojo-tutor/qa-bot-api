@@ -6,7 +6,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
-const passport = require('passport');
+// const passport = require('passport');
 
 // local modules - logger
 const logger = require('./common/logger');
@@ -21,7 +21,10 @@ const { getStatusCode } = require('./common/utils');
 const swaggerDocument = require('./swagger.json');
 
 // local file - middlewares
-const { passportMiddleware, sessionMiddleware } = require('./common/middleware');
+const { sessionMiddleware } = require('./common/middleware');
+
+// local file - passport
+const passport = require('./common/passport');
 
 // local modules - routes
 const noauth = require('./services/noauth/route');
@@ -33,9 +36,6 @@ const categories = require('./services/category/route');
 const results = require('./services/result/route');
 const skills = require('./services/skill/route');
 
-// local modules - models
-const UserModel = require('./services/user/model');
-
 // db stuff
 const dbOptions = { useNewUrlParser: true };
 mongoose.set('useCreateIndex', true);
@@ -44,18 +44,6 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${
   .then(() => logger.info('Successfully connected to database', 'mongoose'))
   .catch(err => logger.error(err.message, 'mongoose'));
 
-
-// configure passport.js to use the local strategy
-passport.use(passportMiddleware);
-passport.serializeUser((user, done) => done(null, user.id));
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await UserModel.findById(id);
-    done(null, user);
-  } catch (error) {
-    done(error);
-  }
-});
 
 // express
 const app = express();

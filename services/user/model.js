@@ -16,7 +16,7 @@ const User = new Schema({
   },
   status: {
     type: String,
-    required: true,
+    default: 'Unverified',
     enum: ['Active', 'Inactive', 'Unverified'],
   },
   email: {

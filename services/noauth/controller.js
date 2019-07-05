@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const logger = require('../../common/logger');
 const UserModel = require('../user/model');
+const TokenModel = require('../token/model');
 const AppError = require('../../common/error');
 const getCommonController = require('../../common/controller');
 const { hashPassword, generateToken, checkToken } = require('../../common/utils');
@@ -11,80 +12,111 @@ const customControllers = {
   async signup(data) {
     try {
       const passwordHash = await hashPassword(data.password);
+      const { token } = await TokenModel.create({ token: Date.now().toString(), email: data.email });
       const result = await UserModel.create({ ...data, password: passwordHash });
-      const token = await generateToken(result.email);
       await mailer({ to: result.email, token });
+
       return { result };
     } catch (error) {
       return { error };
     }
   },
 
-  async validateSignup(data) {
-    try {
-      // check token
-      const { result: decoded, error } = await checkToken(`Bearer ${data.token}`);
+  // async validateSignup(data) {
+  //   try {
+  //     const { token, email } = await TokenModel.findOne({ token: data.token }) || {};
+  //     if (!token) {
+  //       throw new AppError('InvalidTokenError', 400, 'Token is invalid', true);
+  //     }
 
-      // if invalid, throw error and do not proceed
-      if (error) {
-        throw new AppError(error.name, 400, error.message, true);
-      }
+  //     const user = await UserModel.findOne({ email });
+  //     if (!user) {
+  //       throw new AppError('UserNotFoundError', 400, 'User associated with this token cannot be found', true);
+  //     }
 
-      // get user using email
-      const user = await UserModel.findOneAndUpdate(
-        { email: decoded.email },
-        { status: 'Active' },
-        { new: true, runValidators: true },
-      );
-      if (!user) {
-        throw new AppError('AccountNotFoundError', 400, 'Cannot find account associated with this token', true);
-      }
 
-      // generate user token, like logged in
-      const token = await generateToken(data.email);
+  //     return { result };
+  //   } catch (error) {
+  //     return { error };
+  //   }
+  // },
+  // async signup(data) {
+  //   try {
+  //     const passwordHash = await hashPassword(data.password);
+  //     const result = await UserModel.create({ ...data, password: passwordHash });
+  //     const token = await generateToken(result.email);
+  //     await mailer({ to: result.email, token });
+  //     return { result };
+  //   } catch (error) {
+  //     return { error };
+  //   }
+  // },
 
-      const result = {
-        token,
-        user,
-      };
-      return { result };
-    } catch (error) {
-      return { error };
-    }
-  },
+  // async validateSignup(data) {
+  //   try {
+  //     // check token
+  //     const { result: decoded, error } = await checkToken(`Bearer ${data.token}`);
 
-  async login(data) {
-    try {
-      // check required fields
-      await new UserModel.Password(data).validate();
+  //     // if invalid, throw error and do not proceed
+  //     if (error) {
+  //       throw new AppError(error.name, 400, error.message, true);
+  //     }
 
-      // get user
-      const user = await UserModel.findOne({ email: data.email });
-      if (!user) {
-        throw new AppError(null, 400, 'Invalid email and/or password', true);
-      }
+  //     // get user using email
+  //     const user = await UserModel.findOneAndUpdate(
+  //       { email: decoded.email },
+  //       { status: 'Active' },
+  //       { new: true, runValidators: true },
+  //     );
+  //     if (!user) {
+  //       throw new AppError('AccountNotFoundError', 400, 'Cannot find account associated with this token', true);
+  //     }
 
-      // compare passwords
-      await bcrypt
-        .compare(data.password, user.password)
-        .then((valid) => {
-          if (!valid) {
-            throw new AppError(null, 400, 'Invalid email and/or password', true);
-          }
-        });
+  //     // generate user token, like logged in
+  //     const token = await generateToken(data.email);
 
-      // user token
-      const token = await generateToken(data.email);
+  //     const result = {
+  //       token,
+  //       user,
+  //     };
+  //     return { result };
+  //   } catch (error) {
+  //     return { error };
+  //   }
+  // },
 
-      const result = {
-        token,
-        user,
-      };
-      return { result };
-    } catch (error) {
-      return { error };
-    }
-  },
+  // async login(data) {
+  //   try {
+  //     // check required fields
+  //     await new UserModel.Password(data).validate();
+
+  //     // get user
+  //     const user = await UserModel.findOne({ email: data.email });
+  //     if (!user) {
+  //       throw new AppError(null, 400, 'Invalid email and/or password', true);
+  //     }
+
+  //     // compare passwords
+  //     await bcrypt
+  //       .compare(data.password, user.password)
+  //       .then((valid) => {
+  //         if (!valid) {
+  //           throw new AppError(null, 400, 'Invalid email and/or password', true);
+  //         }
+  //       });
+
+  //     // user token
+  //     const token = await generateToken(data.email);
+
+  //     const result = {
+  //       token,
+  //       user,
+  //     };
+  //     return { result };
+  //   } catch (error) {
+  //     return { error };
+  //   }
+  // },
 
   async getLogs(data) {
     // Find items logged between today and yesterday only
