@@ -6,6 +6,7 @@ const AppError = require('utils/error');
 const { hashPassword, generateToken } = require('utils/tools');
 const mailer = require('utils/mailer');
 const TokenModel = require('services/token/model');
+const TokenController = require('services/token/controller');
 const UserModel = require('services/user/model');
 
 // custom or override controller below
@@ -26,14 +27,11 @@ const customControllers = {
 
   async inviteValidate(data) {
     try {
-      const result = await TokenModel.findOne({ token: data.token });
+      // check token
+      const { result, error } = await TokenController.validateToken(data.token);
 
-      if (!result) {
-        throw new AppError('InvalidTokenError', 400, 'Token is invalid', true);
-      }
-
-      if (result.status === 'Expired') {
-        throw new AppError('ExpiredTokenError', 400, 'Token is expired', true);
+      if (error) {
+        return { error };
       }
 
       return { result };

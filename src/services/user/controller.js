@@ -1,8 +1,8 @@
 const getCommonController = require('common/controller');
-const AppError = require('utils/error');
 const { generateToken, hashPassword } = require('utils/tools');
 const mailer = require('utils/mailer');
 const TokenModel = require('services/token/model');
+const TokenController = require('services/token/controller');
 const Model = require('./model');
 const { CompanyUser } = require('./model');
 
@@ -59,29 +59,23 @@ const customControllers = {
       // check required fields
       await new Model.Password(data).validate();
 
-      const {
-        _id: id, token, status,
-      } = await TokenModel.findOne({ token: data.token }) || {};
+      // check token
+      const { result, error } = await TokenController.validateToken(data.token);
 
-      if (!token) {
-        throw new AppError('InvalidTokenError', 400, 'Token is invalid', true);
-      }
-
-      if (status === 'Expired') {
-        throw new AppError('ExpiredTokenError', 400, 'Token is expired', true);
+      if (error) {
+        return { error };
       }
 
       // hash password
       const passwordHash = await hashPassword(data.password);
 
       // update user
-      await Model.updateOne({ email: data.email }, { password: passwordHash, status: 'Active' }).orFail();
+      await Model.updateOne({ email: result.email }, { password: passwordHash, status: 'Active' }).orFail();
 
       // update token
-      await TokenModel.findByIdAndUpdate(id, { status: 'Expired' });
+      await TokenController.updateRecord(result.id, { status: 'Expired' });
 
-      const result = { updated: true };
-      return { result };
+      return { result: { updated: true } };
     } catch (error) {
       return { error };
     }

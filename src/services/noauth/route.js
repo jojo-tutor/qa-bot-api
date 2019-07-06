@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 
 const AppError = require('utils/error');
-const TokenModel = require('services/token/model');
+const TokenController = require('services/token/controller');
 const controller = require('./controller');
 
 const router = express.Router();
@@ -22,19 +22,13 @@ router.post('/signup', async (req, res, next) => {
 
 router.get('/signup/validate', async (req, res, next) => {
   try {
-    const {
-      _id: id, token, status, email,
-    } = await TokenModel.findOne({ token: req.query.token }) || {};
-
-    if (!token) {
-      return next(new AppError('InvalidTokenError', 400, 'Token is invalid', true));
+    // check token
+    const { result, error: tokenError } = await TokenController.validateToken(req.query.token);
+    if (tokenError) {
+      return next(tokenError);
     }
 
-    if (status === 'Expired') {
-      return next(new AppError('ExpiredTokenError', 400, 'Token is expired', true));
-    }
-
-    req.body.email = email;
+    req.body.email = result.email;
 
     return passport.authenticate('local-signup', (error, user) => {
       if (error) {
@@ -45,7 +39,7 @@ router.get('/signup/validate', async (req, res, next) => {
           return next(err);
         }
 
-        await TokenModel.findByIdAndUpdate(id, { status: 'Expired' });
+        await TokenController.updateRecord(result.id, { status: 'Expired' });
 
         return res.status(200).json(user);
       });
