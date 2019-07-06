@@ -9,6 +9,7 @@ const mailer = async ({ to, token, link = process.env.VALIDATE_SIGNUP_LINK }) =>
     templateId: process.env.EMAIL_SIGNUP_TEMPLATE,
     dynamic_template_data: {
       validate_signup_link: `${link}?token=${token}`,
+      validate_invite_link: `${link}?token=${token}`,
     },
   };
   await sgMail.send(msg);

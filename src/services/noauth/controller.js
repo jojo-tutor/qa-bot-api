@@ -26,14 +26,14 @@ const customControllers = {
 
   async inviteValidate(data) {
     try {
-      const result = await TokenModel.findOne({ token: data.token }) || {};
+      const result = await TokenModel.findOne({ token: data.token });
 
       if (!result) {
-        return { error: new AppError('InvalidTokenError', 400, 'Token is invalid', true) };
+        throw new AppError('InvalidTokenError', 400, 'Token is invalid', true);
       }
 
       if (result.status === 'Expired') {
-        return { error: new AppError('ExpiredTokenError', 400, 'Token is expired', true) };
+        throw new AppError('ExpiredTokenError', 400, 'Token is expired', true);
       }
 
       return { result };

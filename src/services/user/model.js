@@ -41,6 +41,14 @@ User.pre('find', function preFind() {
   this.select('-password');
 });
 
+const CompanyUser = new Schema({
+  company: {
+    type: Schema.Types.ObjectId,
+    ref: 'Company',
+    required: true,
+  },
+});
+
 const Password = new Schema({
   email: {
     type: String,
@@ -57,3 +65,4 @@ User.plugin(uniqueValidator);
 
 module.exports = mongoose.model('User', User);
 module.exports.Password = mongoose.model('Password', Password);
+module.exports.CompanyUser = mongoose.model('CompanyUser', CompanyUser);
