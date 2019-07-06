@@ -1,6 +1,10 @@
+import cryptoRandomString from 'crypto-random-string';
+
 const bcrypt = require('bcrypt');
 
 const hashPassword = password => bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS, 10));
+
+const generateToken = () => cryptoRandomString({ length: Number(process.env.TOKEN_LENGTH), type: 'url-safe' });
 
 const getStatusCode = (error) => {
   switch (error.name) {
@@ -16,4 +20,5 @@ const getStatusCode = (error) => {
 module.exports = {
   hashPassword,
   getStatusCode,
+  generateToken,
 };

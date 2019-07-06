@@ -55,6 +55,15 @@ router.get('/signup/validate', async (req, res, next) => {
   }
 });
 
+router.get('/invite/validate', async (req, res, next) => {
+  const { result, error } = await controller.inviteValidate(req.query);
+  if (error) {
+    next(error);
+  } else {
+    res.status(200).json(result);
+  }
+});
+
 router.post('/login', async (req, res, next) => {
   passport.authenticate('local-login', (error, user, info) => {
     if (error) {

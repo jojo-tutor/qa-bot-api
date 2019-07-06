@@ -1,7 +1,9 @@
+
+
 const getCommonController = require('common/controller');
 const logger = require('utils/logger');
 const AppError = require('utils/error');
-const { hashPassword } = require('utils/tools');
+const { hashPassword, generateToken } = require('utils/tools');
 const mailer = require('utils/mailer');
 const TokenModel = require('services/token/model');
 const UserModel = require('services/user/model');
@@ -11,9 +13,28 @@ const customControllers = {
   async signup(data) {
     try {
       const passwordHash = await hashPassword(data.password);
-      const { token } = await TokenModel.create({ token: Date.now().toString(), email: data.email });
+      const randomToken = generateToken();
+      const { token } = await TokenModel.create({ token: randomToken, email: data.email });
       const result = await UserModel.create({ ...data, password: passwordHash });
       await mailer({ to: result.email, token });
+
+      return { result };
+    } catch (error) {
+      return { error };
+    }
+  },
+
+  async inviteValidate(data) {
+    try {
+      const result = await TokenModel.findOne({ token: data.token }) || {};
+
+      if (!result) {
+        return { error: new AppError('InvalidTokenError', 400, 'Token is invalid', true) };
+      }
+
+      if (result.status === 'Expired') {
+        return { error: new AppError('ExpiredTokenError', 400, 'Token is expired', true) };
+      }
 
       return { result };
     } catch (error) {

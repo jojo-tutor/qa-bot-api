@@ -5,7 +5,6 @@ const { Schema } = mongoose;
 const User = new Schema({
   first_name: String,
   last_name: String,
-  password: String,
   company: {
     type: Schema.Types.ObjectId,
     ref: 'Company',
@@ -18,6 +17,10 @@ const User = new Schema({
     type: String,
     default: 'Unverified',
     enum: ['Active', 'Inactive', 'Unverified'],
+  },
+  password: {
+    type: String,
+    required: true,
   },
   email: {
     type: String,

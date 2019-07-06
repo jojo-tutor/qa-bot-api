@@ -8,10 +8,14 @@ const AppError = require('utils/error');
 // local modules - models
 const UserModel = require('services/user/model');
 
-passport.serializeUser((user, done) => done(null, user.id));
-passport.deserializeUser(async (id, done) => {
+passport.serializeUser((user, done) => done(null, user.email));
+passport.deserializeUser(async (email, done) => {
   try {
-    const user = await UserModel.findById(id);
+    const user = await UserModel.findOne({ email });
+    if (user.status !== 'Active') {
+      done(new AppError('AuthError', 400, 'Account is not active', true));
+      return;
+    }
     done(null, user);
   } catch (error) {
     done(error);
