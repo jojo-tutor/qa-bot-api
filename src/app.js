@@ -19,7 +19,7 @@ const { getStatusCode } = require('utils/tools');
 const swaggerDocument = require('docs/swagger.json');
 
 // local file - middlewares
-const { sessionMiddleware } = require('common/middleware');
+const { sessionMiddleware, authMiddleware } = require('common/middleware');
 
 // local file - passport
 const passport = require('config/passport');
@@ -28,7 +28,7 @@ const passport = require('config/passport');
 const mongoose = require('config/mongoose');
 
 // local modules - routes
-const noauth = require('services/noauth/route');
+const main = require('services/main/route');
 const companies = require('services/company/route');
 const users = require('services/user/route');
 const questions = require('services/question/route');
@@ -51,13 +51,6 @@ app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 
-const checkAuth = async (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  return next(new AppError('AuthError', 401, 'Authentication required', true));
-};
-
 // db middleware
 const checkDB = (req, res, next) => {
   if (mongoose.connection.readyState) {
@@ -69,18 +62,19 @@ const checkDB = (req, res, next) => {
 // incoming request logger middleware
 app.use((req, res, next) => {
   logger.info('Incoming request', req.path);
+  logger.info(`Request body ${JSON.stringify(req.body)}`, req.path);
   next();
 });
 
 // app routes
-app.use('/', checkDB, noauth);
-app.use('/companies', checkAuth, companies);
-app.use('/users', checkAuth, users);
-app.use('/questions', checkAuth, questions);
-app.use('/tests', checkAuth, tests);
-app.use('/categories', checkAuth, categories);
-app.use('/results', checkAuth, results);
-app.use('/skills', checkAuth, skills);
+app.use('/', checkDB, main);
+app.use('/companies', authMiddleware, companies);
+app.use('/users', authMiddleware, users);
+app.use('/questions', authMiddleware, questions);
+app.use('/tests', authMiddleware, tests);
+app.use('/categories', authMiddleware, categories);
+app.use('/results', authMiddleware, results);
+app.use('/skills', authMiddleware, skills);
 
 // swagger
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { showExplorer: true }));
