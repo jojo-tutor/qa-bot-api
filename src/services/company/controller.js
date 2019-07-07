@@ -18,7 +18,7 @@ const customControllers = {
       // crate user
       const passwordHash = await hashPassword(data.password);
       await UserModel.create({
-        ...data, role: 'Admin', password: passwordHash, company: createdCompany.id,
+        ...data, role: 'Company_Admin', password: passwordHash, company: createdCompany.id,
       });
 
       // create token and send verification email

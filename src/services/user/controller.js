@@ -21,7 +21,11 @@ const customControllers = {
     try {
       await new CompanyUser(data).validate();
 
-      const result = await Model.create(data);
+      const result = await Model.create({
+        email: data.email,
+        company: data.company,
+        password: generateToken(), // dont worry, this will be set on email verification
+      });
 
       // create token and send invite email
       const randomToken = generateToken();

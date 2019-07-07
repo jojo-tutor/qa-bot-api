@@ -16,7 +16,7 @@ const customControllers = {
       const passwordHash = await hashPassword(data.password);
       const randomToken = generateToken();
       const { token } = await TokenModel.create({ token: randomToken, email: data.email });
-      const result = await UserModel.create({ ...data, password: passwordHash });
+      const result = await UserModel.create({ email: data.email, password: passwordHash });
       await mailer({ to: result.email, token });
 
       return { result };

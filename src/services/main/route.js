@@ -81,7 +81,7 @@ router.post('/logout', (req, res) => {
   res.status(200).json({ logout: true });
 });
 
-router.get('/logs', authMiddleware, permissionMiddleware(['Admin']), async (req, res, next) => {
+router.get('/logs', authMiddleware, permissionMiddleware('logs:read'), async (req, res, next) => {
   const { result, error } = await controller.getLogs(req.query);
   if (error) {
     next(error);
