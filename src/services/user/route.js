@@ -1,10 +1,13 @@
 const express = require('express');
+const { getPermissions } = require('common/middleware');
 const getCommonRoute = require('common/route');
 const controller = require('./controller');
 
 const router = express.Router();
 
 // custom or route below
+const middlewares = [getPermissions];
+
 router.put('/change-password', async (req, res, next) => {
   const { result, error } = await controller.changePassword(req.body);
   if (error) {
@@ -23,6 +26,6 @@ router.put('/reset-password', async (req, res, next) => {
   }
 });
 
-const route = getCommonRoute(router, controller);
+const route = getCommonRoute(router, controller, middlewares);
 
 module.exports = route;

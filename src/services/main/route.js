@@ -3,7 +3,7 @@ const passport = require('passport');
 
 const AppError = require('utils/error');
 const TokenController = require('services/token/controller');
-const { authMiddleware, permissionMiddleware } = require('common/middleware');
+const { authMiddleware, getPermissions } = require('common/middleware');
 const controller = require('./controller');
 
 const router = express.Router();
@@ -81,7 +81,7 @@ router.post('/logout', (req, res) => {
   res.status(200).json({ logout: true });
 });
 
-router.get('/logs', authMiddleware, permissionMiddleware('logs:read'), async (req, res, next) => {
+router.get('/logs', authMiddleware, getPermissions, async (req, res, next) => {
   const { result, error } = await controller.getLogs(req.query);
   if (error) {
     next(error);

@@ -1,4 +1,6 @@
-const getCommonRoute = (router, controller) => {
+
+
+const getCommonRoute = (router, controller, middlewares = []) => {
   const {
     getRecords,
     getRecord,
@@ -7,7 +9,7 @@ const getCommonRoute = (router, controller) => {
     deleteRecord,
   } = controller;
 
-  router.get('/', async (req, res, next) => {
+  router.get('/', middlewares, async (req, res, next) => {
     const { result, error } = await getRecords(req.query);
     if (error) {
       next(error);
@@ -16,7 +18,7 @@ const getCommonRoute = (router, controller) => {
     }
   });
 
-  router.get('/:id', async (req, res, next) => {
+  router.get('/:id', middlewares, async (req, res, next) => {
     const { result, error } = await getRecord(req.params.id);
     if (error) {
       next(error);
@@ -25,7 +27,7 @@ const getCommonRoute = (router, controller) => {
     }
   });
 
-  router.post('/', async (req, res, next) => {
+  router.post('/', middlewares, async (req, res, next) => {
     const { result, error } = await createRecord(req.body);
     if (error) {
       next(error);
@@ -34,7 +36,7 @@ const getCommonRoute = (router, controller) => {
     }
   });
 
-  router.put('/:id', async (req, res, next) => {
+  router.put('/:id', middlewares, async (req, res, next) => {
     const { result, error } = await updateRecord(req.params.id, req.body);
     if (error) {
       next(error);
@@ -43,7 +45,7 @@ const getCommonRoute = (router, controller) => {
     }
   });
 
-  router.delete('/:id', async (req, res, next) => {
+  router.delete('/:id', middlewares, async (req, res, next) => {
     const { result, error } = await deleteRecord(req.params.id);
     if (error) {
       next(error);

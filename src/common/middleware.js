@@ -3,6 +3,7 @@ const session = require('express-session');
 const mergeWith = require('lodash/mergeWith');
 const MongoStore = require('connect-mongo')(session);
 
+const logger = require('utils/logger');
 const AppError = require('utils/error');
 
 const sessionMiddleware = session({
@@ -22,17 +23,53 @@ const authMiddleware = async (req, res, next) => {
   return next(new AppError('AuthError', 401, 'Authentication required', true));
 };
 
-const permissionMiddleware = permissions => async (req, res, next) => {
+const can = (rolePermissionsList, resourcePermission, role) => {
+  const [resource, permission] = resourcePermission.split(':');
+
+  const rolePermission = rolePermissionsList[role];
+  if (!rolePermission) {
+    return false;
+  }
+
+  if (rolePermission.inherits) {
+    const inheritedCan = rolePermissionsList[rolePermission.inherits].can;
+    rolePermission.can = [...inheritedCan, ...rolePermission.can];
+  }
+
+  const resourceCan = rolePermission.can.filter(e => e.resource === resource);
+  if (!resourceCan.length) {
+    return false;
+  }
+
+  const customizer = (objValue, srcValue) => {
+    if (Array.isArray(objValue)) {
+      return [...objValue, ...srcValue];
+    }
+    return undefined;
+  };
+
+  const resourcePermissions = resourceCan.reduce((l, r) => mergeWith(l, r, customizer), {});
+
+  if (resourcePermissions.permissions.includes('all')) {
+    return true;
+  }
+
+  return resourcePermissions.permissions.includes(permission);
+};
+
+const getPermissions = async (req, res, next) => {
+  const [baseUrl] = req.originalUrl.split('/').filter(Boolean);
+  const permissions = `${baseUrl}:${req.method.toLowerCase()}`;
   const rolePermissionsList = {
     Guest: {
       can: [
         {
           resource: 'tests',
-          permissions: ['read'],
+          permissions: ['get'],
         },
         {
           resource: 'questions',
-          permissions: ['read'],
+          permissions: ['get'],
         },
       ],
     },
@@ -40,11 +77,11 @@ const permissionMiddleware = permissions => async (req, res, next) => {
       can: [
         {
           resource: 'tests',
-          permissions: ['update'],
+          permissions: ['put'],
         },
         {
           resource: 'results',
-          permissions: ['read', 'update'],
+          permissions: ['get', 'put'],
         },
       ],
       inherits: 'Guest',
@@ -89,43 +126,11 @@ const permissionMiddleware = permissions => async (req, res, next) => {
     },
   };
 
-  const can = (resourcePermission, role) => {
-    const [resource, permission] = resourcePermission.split(':');
 
-    const rolePermission = rolePermissionsList[role];
-    if (!rolePermission) {
-      return false;
-    }
+  const { role } = req.user;
+  logger.info(JSON.stringify({ role, permissions }), 'getPermissions');
 
-    if (rolePermission.inherits) {
-      const inheritedCan = rolePermissionsList[rolePermission.inherits].can;
-      rolePermission.can = [...inheritedCan, ...rolePermission.can];
-    }
-
-    const resourceCan = rolePermission.can.filter(e => e.resource === resource);
-    if (!resourceCan.length) {
-      return false;
-    }
-
-    const customizer = (objValue, srcValue) => {
-      if (Array.isArray(objValue)) {
-        return [...objValue, ...srcValue];
-      }
-      return undefined;
-    };
-
-    const resourcePermissions = resourceCan.reduce((l, r) => mergeWith(l, r, customizer), {});
-
-    if (resourcePermissions.permissions.includes('all')) {
-      return true;
-    }
-
-    return resourcePermissions.permissions.includes(permission);
-  };
-
-  console.log('@permission middleware', req.user.role);
-
-  if (can(permissions, req.user.role)) {
+  if (can(rolePermissionsList, permissions, role)) {
     return next();
   }
 
@@ -135,5 +140,5 @@ const permissionMiddleware = permissions => async (req, res, next) => {
 module.exports = {
   sessionMiddleware,
   authMiddleware,
-  permissionMiddleware,
+  getPermissions,
 };
