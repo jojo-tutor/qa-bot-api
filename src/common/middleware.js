@@ -24,7 +24,7 @@ const authMiddleware = async (req, res, next) => {
   return next(new AppError('AuthError', 401, 'Authentication required', true));
 };
 
-const can = (permissionList, resourcePermission, role) => {
+const hasPermission = (permissionList, resourcePermission, role) => {
   const [resource, permission] = resourcePermission.split(':');
 
   const rolePermission = permissionList[role];
@@ -65,7 +65,7 @@ const getPermissions = async (req, res, next) => {
   const { role } = req.user;
   logger.info(JSON.stringify({ role, permissions }), 'getPermissions');
 
-  if (can(permissionsLookupList, permissions, role)) {
+  if (hasPermission(permissionsLookupList, permissions, role)) {
     return next();
   }
 
