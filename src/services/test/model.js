@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const Test = new Schema({
-  description: String,
   name: {
     type: String,
     required: true,
@@ -33,6 +32,7 @@ const Test = new Schema({
     type: String,
     enum: ['Easy', 'Intermediate', 'Hard'],
   },
+  description: String,
 });
 
 module.exports = mongoose.model('Test', Test);

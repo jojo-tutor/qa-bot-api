@@ -12,13 +12,14 @@ const Result = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Test',
   },
-  company: {
-    type: Schema.Types.ObjectId,
-    ref: 'Company',
-  },
   status: {
     type: String,
     enum: ['On-going', 'Completed'],
+    required: true
+  },
+  company: {
+    type: Schema.Types.ObjectId,
+    ref: 'Company',
   },
   questions_answered: Number,
   ellapsed_time: String, // in seconds

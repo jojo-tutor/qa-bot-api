@@ -1092,6 +1092,127 @@
     "Questions": {
       "type": "array",
       "$ref": "#/definitions/Question"
+    },
+    "Result": {
+      "required": [
+        "_id",
+        "user",
+        "test"
+      ],
+      "properties": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "user": {
+          "type": "string"
+        },
+        "test": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["On-going", "Completed"]
+        },
+        "company": {
+          "type": "string"
+        },
+        "questions_answered": {
+          "type": "number"
+        },
+        "ellapsed_time": {
+          "type": "string"
+        },
+        "completed_date": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number"
+        },
+        "total": {
+          "type": "number"
+        },
+        "passing_percentage": {
+          "type": "number"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "Results": {
+      "type": "array",
+      "$ref": "#/definitions/Result"
+    },
+    "Skill": {
+      "required": [
+        "_id",
+        "name"
+      ],
+      "properties": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "Skills": {
+      "type": "array",
+      "$ref": "#/definitions/Skill"
+    },
+    "Test": {
+      "required": [
+        "_id",
+        "name",
+        "time_limit"
+      ],
+      "properties": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "time_limit": {
+          "type": "string"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["Easy", "Intermediate", "Hard"]
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "Tests": {
+      "type": "array",
+      "$ref": "#/definitions/Test"
     }
   }
 }
