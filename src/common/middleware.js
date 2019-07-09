@@ -5,6 +5,7 @@ const MongoStore = require('connect-mongo')(session);
 
 const logger = require('utils/logger');
 const AppError = require('utils/error');
+const permissionsLookupList = require('config/permissions');
 
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET,
@@ -23,16 +24,16 @@ const authMiddleware = async (req, res, next) => {
   return next(new AppError('AuthError', 401, 'Authentication required', true));
 };
 
-const can = (rolePermissionsList, resourcePermission, role) => {
+const can = (permissionList, resourcePermission, role) => {
   const [resource, permission] = resourcePermission.split(':');
 
-  const rolePermission = rolePermissionsList[role];
+  const rolePermission = permissionList[role];
   if (!rolePermission) {
     return false;
   }
 
   if (rolePermission.inherits) {
-    const inheritedCan = rolePermissionsList[rolePermission.inherits].can;
+    const inheritedCan = permissionList[rolePermission.inherits].can;
     rolePermission.can = [...inheritedCan, ...rolePermission.can];
   }
 
@@ -60,77 +61,11 @@ const can = (rolePermissionsList, resourcePermission, role) => {
 const getPermissions = async (req, res, next) => {
   const [baseUrl] = req.originalUrl.split('/').filter(Boolean);
   const permissions = `${baseUrl}:${req.method.toLowerCase()}`;
-  const rolePermissionsList = {
-    Guest: {
-      can: [
-        {
-          resource: 'tests',
-          permissions: ['get'],
-        },
-        {
-          resource: 'questions',
-          permissions: ['get'],
-        },
-      ],
-    },
-    Candidate: {
-      can: [
-        {
-          resource: 'tests',
-          permissions: ['put'],
-        },
-        {
-          resource: 'results',
-          permissions: ['get', 'put'],
-        },
-      ],
-      inherits: 'Guest',
-    },
-    Admin: {
-      can: [
-        {
-          resource: 'users',
-          permissions: ['all'],
-        },
-        {
-          resource: 'categories',
-          permissions: ['all'],
-        },
-        {
-          resource: 'questions',
-          permissions: ['all'],
-        },
-        {
-          resource: 'results',
-          permissions: ['all'],
-        },
-        {
-          resource: 'skills',
-          permissions: ['all'],
-        },
-        {
-          resource: 'tests',
-          permissions: ['all'],
-        },
-      ],
-      inherits: 'Candidate',
-    },
-    Super_Admin: {
-      can: [
-        {
-          resource: 'logs',
-          permissions: ['all'],
-        },
-      ],
-      inherits: 'Admin',
-    },
-  };
-
 
   const { role } = req.user;
   logger.info(JSON.stringify({ role, permissions }), 'getPermissions');
 
-  if (can(rolePermissionsList, permissions, role)) {
+  if (can(permissionsLookupList, permissions, role)) {
     return next();
   }
 
