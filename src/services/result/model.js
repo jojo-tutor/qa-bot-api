@@ -3,20 +3,22 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const Result = new Schema({
   user: {
+    required: true,
     type: Schema.Types.ObjectId,
     ref: 'User',
+  },
+  test: {
+    required: true,
+    type: Schema.Types.ObjectId,
+    ref: 'Test',
   },
   company: {
     type: Schema.Types.ObjectId,
     ref: 'Company',
   },
-  test: {
-    type: Schema.Types.ObjectId,
-    ref: 'Test',
-  },
   status: {
     type: String,
-    enum: ['Invited', 'On-going', 'Completed'],
+    enum: ['On-going', 'Completed'],
   },
   questions_answered: Number,
   ellapsed_time: String, // in seconds
