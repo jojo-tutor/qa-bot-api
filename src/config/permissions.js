@@ -12,6 +12,7 @@ module.exports = {
     ],
   },
   Candidate: {
+    inherits: 'Guest',
     can: [
       {
         resource: 'tests',
@@ -22,9 +23,9 @@ module.exports = {
         permissions: ['get', 'put'],
       },
     ],
-    inherits: 'Guest',
   },
   Admin: {
+    inherits: 'Candidate',
     can: [
       {
         resource: 'users',
@@ -51,15 +52,18 @@ module.exports = {
         permissions: ['all'],
       },
     ],
-    inherits: 'Candidate',
   },
   Super_Admin: {
+    inherits: 'Admin',
     can: [
+      {
+        resource: 'companies',
+        permissions: ['all'],
+      },
       {
         resource: 'logs',
         permissions: ['all'],
       },
     ],
-    inherits: 'Admin',
   },
 };
