@@ -24,7 +24,17 @@ const customControllers = {
       // create token and send verification email
       const randomToken = generateToken();
       const { token } = await TokenModel.create({ token: randomToken, email: data.email });
-      await mailer({ to: data.email, token });
+
+      await mailer({
+        to: data.email,
+        subject: 'Welcome to QA-Bot! Confirm Your Email',
+        data: {
+          header: 'You\'re on your way. Let\'s confirm your email address.',
+          description: 'By clicking on the following link you are confirming your email address.',
+          button_label: 'Confirm Email Address',
+          button_link: `${process.env.PORTAL_HOST}/signup/validate?token=${token}`,
+        },
+      });
 
       const result = await Model.findById(createdCompany.id);
       return { result };

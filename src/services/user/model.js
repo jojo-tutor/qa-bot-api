@@ -11,8 +11,8 @@ const User = new Schema({
   },
   role: {
     type: String,
-    default: 'Candidate',
-    enum: ['Super_Admin', 'Company_Admin', 'Candidate', 'Guest'],
+    default: 'Guest',
+    enum: ['Guest', 'Candidate', 'Company_Admin', 'Super_Admin'],
   },
   status: {
     type: String,

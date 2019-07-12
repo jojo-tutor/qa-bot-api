@@ -16,8 +16,18 @@ const customControllers = {
       const passwordHash = await hashPassword(data.password);
       const randomToken = generateToken();
       const { token } = await TokenModel.create({ token: randomToken, email: data.email });
-      const result = await UserModel.create({ email: data.email, password: passwordHash });
-      await mailer({ to: result.email, token });
+      const result = await UserModel.create({ email: data.email, password: passwordHash, role: 'Guest' });
+
+      await mailer({
+        to: data.email,
+        subject: 'Welcome to QA-Bot! Confirm Your Email',
+        data: {
+          header: 'You\'re on your way. Let\'s confirm your email address.',
+          description: 'By clicking on the following link you are confirming your email address.',
+          button_label: 'Confirm Email Address',
+          button_link: `${process.env.PORTAL_HOST}/signup/validate?token=${token}`,
+        },
+      });
 
       return { result };
     } catch (error) {

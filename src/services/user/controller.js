@@ -27,12 +27,14 @@ const customControllers = {
       const result = await Model.create({
         email: data.email,
         company: data.company,
+        role: 'Candidate',
         password: generateToken(), // dont worry, this will be set on email verification
       });
 
       // create token and send invite email
       const randomToken = generateToken();
       const { token } = await TokenModel.create({ token: randomToken, email: data.email });
+
       await mailer({
         to: data.email,
         subject: '[QA-Bot] Reset Your Password',

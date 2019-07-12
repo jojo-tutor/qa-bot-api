@@ -1,4 +1,9 @@
 module.exports = {
+  /**
+   * A user that signed-up without a company
+   * Created through sign-up
+   * Email confirmation is sent
+  */
   Guest: {
     can: [
       {
@@ -11,6 +16,12 @@ module.exports = {
       },
     ],
   },
+
+  /**
+   * A user that is created by a company admin
+   * Created through user create
+   * Email invitation / reset password is sent
+  */
   Candidate: {
     inherits: 'Guest',
     can: [
@@ -24,6 +35,12 @@ module.exports = {
       },
     ],
   },
+
+  /**
+   * A user that signed-up with a company
+   * Created through sign-up
+   * Email confirmation is sent
+  */
   Admin: {
     inherits: 'Candidate',
     can: [
@@ -53,6 +70,12 @@ module.exports = {
       },
     ],
   },
+
+  /**
+   * A super user of the app
+   * Predefined creation
+   * Nothing is sent
+  */
   Super_Admin: {
     inherits: 'Admin',
     can: [

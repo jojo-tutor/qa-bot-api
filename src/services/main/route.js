@@ -2,8 +2,9 @@ const express = require('express');
 const passport = require('passport');
 
 const AppError = require('utils/error');
-const TokenController = require('services/token/controller');
 const { authMiddleware, getPermissions } = require('common/middleware');
+const TokenController = require('services/token/controller');
+const CompanyController = require('services/company/controller');
 const controller = require('./controller');
 
 const router = express.Router();
@@ -13,7 +14,10 @@ router.get('/', (req, res) => res.status(200).json({
 }));
 
 router.post('/signup', async (req, res, next) => {
-  const { result, error } = await controller.signup(req.body);
+  const signupController = req.body.company_name ? CompanyController.createRecord : controller.signup;
+  const name = req.body.company_name;
+
+  const { result, error } = await signupController({ ...req.body, name });
   if (error) {
     next(error);
   } else {
