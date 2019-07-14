@@ -6,7 +6,7 @@ const mailer = async ({
   to,
   data,
   subject,
-  templateId = process.env.EMAIL_SIGNUP_TEMPLATE,
+  templateId = process.env.EMAIL_TEMPLATE,
 }) => {
   const {
     header, description, button_label, button_link, // eslint-disable-line

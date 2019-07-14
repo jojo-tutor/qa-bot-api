@@ -14,7 +14,9 @@ router.get('/', (req, res) => res.status(200).json({
 }));
 
 router.post('/signup', async (req, res, next) => {
-  const signupController = req.body.company_name ? CompanyController.createRecord : controller.signup;
+  const signupController = req.body.company_name
+    ? CompanyController.createRecord
+    : controller.signup;
   const name = req.body.company_name;
 
   const { result, error } = await signupController({ ...req.body, name });

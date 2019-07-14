@@ -46,13 +46,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
+// express session
 app.use(sessionMiddleware);
 
+// passport
 app.use(passport.initialize());
 app.use(passport.session());
 
 // db middleware
-const checkDB = (req, res, next) => {
+const checkDBStatus = (req, res, next) => {
   if (mongoose.connection.readyState) {
     return next();
   }
@@ -67,7 +69,7 @@ app.use((req, res, next) => {
 });
 
 // app routes
-app.use('/', checkDB, main);
+app.use('/', checkDBStatus, main);
 app.use('/companies', authMiddleware, companies);
 app.use('/users', authMiddleware, users);
 app.use('/questions', authMiddleware, questions);
