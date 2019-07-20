@@ -1,3 +1,5 @@
+import mocks from 'mocks';
+
 const express = require('express');
 const passport = require('passport');
 
@@ -95,5 +97,11 @@ router.get('/logs', authMiddleware, getPermissions, async (req, res, next) => {
     res.status(200).json(result);
   }
 });
+
+// mocking: NOT available on production
+if (process.env.NODE_ENV !== 'production') {
+  router.post('/mocks', mocks.create);
+  router.delete('/mocks', mocks.delete);
+}
 
 module.exports = router;

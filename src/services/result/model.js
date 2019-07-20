@@ -15,7 +15,7 @@ const Result = new Schema({
   status: {
     type: String,
     enum: ['On-going', 'Completed'],
-    required: true
+    required: true,
   },
   company: {
     type: Schema.Types.ObjectId,
