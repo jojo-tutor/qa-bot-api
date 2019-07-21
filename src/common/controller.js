@@ -18,6 +18,7 @@ const getCommonController = (Model, customControllers = {}) => {
       const result = {
         list,
         count,
+        pages: Math.ceil(count / options.limit),
         ...options,
       };
       return { result };
