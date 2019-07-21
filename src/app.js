@@ -1,3 +1,6 @@
+// local file - cors
+import cors from 'config/cors';
+
 // set environment variables
 const envPath = require('path').resolve(process.cwd(), process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env');
 require('dotenv').config({ path: envPath });
@@ -52,6 +55,9 @@ app.use(sessionMiddleware);
 // passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+// cors
+app.use(cors());
 
 // db middleware
 const checkDBStatus = (req, res, next) => {
