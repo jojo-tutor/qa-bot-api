@@ -1,15 +1,20 @@
 const getCommonController = (Model, customControllers = {}) => {
   const getRecords = customControllers.getRecords || (async (query) => {
-    const { limit = 10, skip = 0 } = query;
-    const options = {
-      limit: parseInt(limit, 10),
-      skip: parseInt(skip, 10),
-    };
-    const filters = {};
-    const fields = '';
     try {
+      const { limit = 10, skip = 0 } = query;
+      const sort = query.sort ? JSON.parse(query.sort) : [];
+      const options = {
+        limit: parseInt(limit, 10),
+        skip: parseInt(skip, 10),
+      };
+      const filters = {};
+      const fields = '';
+      const sortFields = sort.reduce((acc, { id, desc }) => ([...acc, [id, desc ? -1 : 1]]), []);
+
       const count = await Model.countDocuments();
-      const list = await Model.find(filters, fields, options);
+      const list = await Model
+        .find(filters, fields, options)
+        .sort(sortFields);
       const result = {
         list,
         count,
