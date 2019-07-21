@@ -59,8 +59,9 @@ const hasPermission = (permissionList, resourcePermission, role) => {
 };
 
 const getPermissions = async (req, res, next) => {
-  const [baseUrl] = req.originalUrl.split('/').filter(Boolean);
-  const permissions = `${baseUrl}:${req.method.toLowerCase()}`;
+  const [url] = req.originalUrl.split('/').filter(Boolean);
+  const [base] = url.split('?');
+  const permissions = `${base}:${req.method.toLowerCase()}`;
 
   const { role } = req.user;
   logger.info(JSON.stringify({ role, permissions }), 'getPermissions');
