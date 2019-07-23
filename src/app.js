@@ -1,6 +1,3 @@
-// local file - cors
-import cors from 'config/cors';
-
 // set environment variables
 const envPath = require('path').resolve(process.cwd(), process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env');
 require('dotenv').config({ path: envPath });
@@ -29,6 +26,9 @@ const passport = require('config/passport');
 
 // local file - mongoose
 const mongoose = require('config/mongoose');
+
+// local file - cors
+const cors = require('config/cors');
 
 // local modules - routes
 const main = require('services/main/route');
