@@ -7,7 +7,7 @@
   "scripts": {
     "build": "./node_modules/.bin/babel src --verbose --debug --copy-files --out-dir build",
     "dev": "nodemon --exec babel-node src/server",
-    "start": "pm2 start ecosystem.config.js --env production"
+    "start": "pm2-runtime start ecosystem.config.js --env production"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
