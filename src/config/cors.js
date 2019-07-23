@@ -4,18 +4,19 @@ import cors from 'cors';
 const AppError = require('utils/error');
 
 // white listed domains: applied except in development
-const whitelist = process.env.CORS_WHITELIST;
+const whitelist = (process.env.CORS_WHITELIST || '').split(',');
 
 // only allow CORS on development: all, production: whitelist
 const corsDelegate = (req, callback) => {
+  const host = req.get('host');
   const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
   let options = { origin: false };
   let error = null;
 
-  if (isDevelopment || whitelist.includes(req.headers.host)) {
+  if (isDevelopment || whitelist.includes(host)) {
     options = { origin: true };
   } else {
-    error = new AppError('CORS', 403, `Not allowed by CORS. Host Origin: ${req.headers.host}`, true);
+    error = new AppError('CORS', 403, `Not allowed by CORS. Host Origin: ${host}`, true);
   }
 
   callback(error, options);
