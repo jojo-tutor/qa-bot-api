@@ -5,7 +5,7 @@ module.exports = {
       script: 'build/server.js',
 
       // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
-      instances: '1',
+      instances: 'max',
       autorestart: true,
       watch: false,
       max_memory_restart: '1G',
