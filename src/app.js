@@ -21,14 +21,14 @@ const swaggerDocument = require('docs/swagger.json');
 // local file - middlewares
 const { sessionMiddleware, authMiddleware } = require('common/middleware');
 
+// local file - basic auth
+const basicAuth = require('config/basicAuth');
+
 // local file - passport
 const passport = require('config/passport');
 
 // local file - mongoose
 const mongoose = require('config/mongoose');
-
-// local file - cors
-const cors = require('config/cors');
 
 // local modules - routes
 const main = require('services/main/route');
@@ -49,15 +49,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
+// basic auth middleware
+app.use(basicAuth);
+
 // express session
 app.use(sessionMiddleware);
 
 // passport
 app.use(passport.initialize());
 app.use(passport.session());
-
-// cors
-app.use(cors());
 
 // db middleware
 const checkDBStatus = (req, res, next) => {
