@@ -27,8 +27,8 @@ const basicAuth = require('config/basicAuth');
 // local file - passport
 const passport = require('config/passport');
 
-// local file - mongoose
-const mongoose = require('config/mongoose');
+// local file - database
+const database = require('config/database');
 
 // local modules - routes
 const main = require('services/main/route');
@@ -42,6 +42,9 @@ const skills = require('services/skill/route');
 
 // express
 const app = express();
+
+// mongoose
+const mongoose = database();
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
