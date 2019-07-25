@@ -16,7 +16,7 @@ const AppError = require('utils/error');
 const { getStatusCode } = require('utils/tools');
 
 // local file - swagger
-const swaggerDocument = require('docs/swagger.json');
+const swaggerDocument = require('docs/swagger');
 
 // local file - middlewares
 const { sessionMiddleware, authMiddleware } = require('common/middleware');
@@ -48,6 +48,9 @@ const app = express();
 
 // mongoose
 const mongoose = database({ onSuccess: setupUser });
+
+// swagger
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { showExplorer: true }));
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -89,9 +92,6 @@ app.use('/tests', authMiddleware, tests);
 app.use('/categories', authMiddleware, categories);
 app.use('/results', authMiddleware, results);
 app.use('/skills', authMiddleware, skills);
-
-// swagger
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { showExplorer: true }));
 
 // 404 handler middleware
 app.use((req, res, next) => next(new AppError('NotFoundError', 404, 'Endpoint not found', true)));
