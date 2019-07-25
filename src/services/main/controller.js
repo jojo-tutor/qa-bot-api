@@ -11,12 +11,16 @@ const UserModel = require('services/user/model');
 
 // custom or override controller below
 const customControllers = {
-  async signup(data) {
+  async signup(data, { role }) {
     try {
       const passwordHash = await hashPassword(data.password);
       const randomToken = generateToken();
       const { token } = await TokenModel.create({ token: randomToken, email: data.email });
-      const result = await UserModel.create({ email: data.email, password: passwordHash, role: 'Guest' });
+      const result = await UserModel.create({
+        email: data.email,
+        password: passwordHash,
+        role: role || 'Guest',
+      });
 
       await mailer({
         to: data.email,

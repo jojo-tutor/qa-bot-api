@@ -12,8 +12,12 @@ passport.serializeUser((user, done) => done(null, user.email));
 passport.deserializeUser(async (email, done) => {
   try {
     const user = await UserModel.findOne({ email });
+    if (!user) {
+      done(new AppError('AuthError', 401, 'Account has been deleted', true));
+      return;
+    }
     if (user.status !== 'Active') {
-      done(new AppError('AuthError', 400, 'Account is not active', true));
+      done(new AppError('AuthError', 401, 'Account is not active', true));
       return;
     }
     done(null, user);

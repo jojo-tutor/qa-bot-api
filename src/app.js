@@ -30,6 +30,9 @@ const passport = require('config/passport');
 // local file - database
 const database = require('config/database');
 
+// local file - database
+const setupUser = require('config/superAdmin');
+
 // local modules - routes
 const main = require('services/main/route');
 const companies = require('services/company/route');
@@ -44,7 +47,7 @@ const skills = require('services/skill/route');
 const app = express();
 
 // mongoose
-const mongoose = database();
+const mongoose = database({ onSuccess: setupUser });
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));

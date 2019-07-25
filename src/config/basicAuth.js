@@ -4,7 +4,7 @@ const compare = require('tsscmp');
 // local modules - custom error
 const AppError = require('utils/error');
 
-const check = (name, pass) => {
+const isValid = (name, pass) => {
   let valid = true;
 
   // Simple method to prevent short-circut and use timing-safe compare
@@ -17,7 +17,7 @@ const check = (name, pass) => {
 const authMiddleware = (req, res, next) => {
   const credentials = auth(req);
 
-  if (!credentials || !check(credentials.name, credentials.pass)) {
+  if (!credentials || !isValid(credentials.name, credentials.pass)) {
     return next(new AppError('AuthError', 401, 'Authorization required', true));
   }
 
