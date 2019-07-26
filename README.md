@@ -1,4 +1,4 @@
-# QA-Bot API [![Twitter](https://img.shields.io/twitter/url/https/github.com/jojo-tutor/react-error-handler.svg?style=social)](https://twitter.com/intent/tweet?text=ShoppingCartDnD:&url=https%3A%2F%2Fgithub.com%2Fjojo-tutor%2Freact-error-handler)
+# QA-Bot API [![Twitter](https://img.shields.io/twitter/url/https/github.com/jojo-tutor/qa-bot-api.svg?style=social)](https://twitter.com/intent/tweet?text=QA-Bot-API:&url=https%3A%2F%2Fgithub.com%2Fjojo-tutor%2Fqa-bot-api)
 
 ![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)
 
