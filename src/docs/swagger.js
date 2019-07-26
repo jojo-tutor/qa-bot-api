@@ -1,15 +1,25 @@
 module.exports = {
-  swagger: '2.0',
+  openapi: '3.0.0',
   info: {
     version: '1.0.0',
     title: 'QA-Bot',
-    description: 'A question and answer app for your candidates!',
+    description: 'A question and answer app where companies can filter candidates by inviting them to take the challenging tests.',
     license: {
       name: 'MIT',
       url: 'https://opensource.org/licenses/MIT',
     },
+    contact: {
+      name: 'API Support',
+      url: 'https://jojotutor.netlify.com/',
+      email: 'support@qabot.com',
+    },
   },
-  basePath: '/',
+  servers: [
+    {
+      url: '/',
+      description: 'Rest API',
+    },
+  ],
   tags: [
     {
       name: 'Auth',
@@ -20,22 +30,267 @@ module.exports = {
       description: 'API for users in the system',
     },
   ],
-  schemes: [
-    'http',
-    'https',
-  ],
-  consumes: [
-    'application/json',
-  ],
-  produces: [
-    'application/json',
-  ],
-  securityDefinitions: {
-    cookieAuth: {
-      type: 'apiKey',
-      in: 'cookie',
-      name: 'connect.sid',
+  components: {
+    securitySchemes: {
+      cookieAuth: {
+        type: 'apiKey',
+        in: 'cookie',
+        name: 'connect.sid',
+      },
+      basicAuth: {
+        type: 'http',
+        scheme: 'basic',
+      },
     },
+    schemas: {
+      Login: {
+        required: [
+          'email',
+          'password',
+        ],
+        properties: {
+          email: {
+            type: 'string',
+            uniqueItems: true,
+          },
+          password: {
+            type: 'string',
+          },
+        },
+      },
+      User: {
+        required: [
+          'email',
+          '_id',
+        ],
+        properties: {
+          email: {
+            type: 'string',
+            uniqueItems: true,
+          },
+          status: {
+            type: 'string',
+          },
+        },
+      },
+      Users: {
+        type: 'array',
+        $ref: '#/components/schemas/User',
+      },
+      Company: {
+        required: [
+          'name',
+          'email',
+          '_id',
+        ],
+        properties: {
+          _id: {
+            type: 'string',
+            uniqueItems: true,
+          },
+          email: {
+            type: 'string',
+            uniqueItems: true,
+          },
+        },
+      },
+      Companies: {
+        type: 'array',
+        $ref: '#/components/schemas/Company',
+      },
+      Category: {
+        required: [
+          '_id',
+          'name',
+        ],
+        properties: {
+          _id: {
+            type: 'string',
+            uniqueItems: true,
+          },
+          name: {
+            type: 'string',
+          },
+          description: {
+            type: 'string',
+          },
+        },
+      },
+      Categories: {
+        type: 'array',
+        $ref: '#/components/schemas/Category',
+      },
+      Question: {
+        required: [
+          '_id',
+          'question',
+          'answer',
+        ],
+        properties: {
+          _id: {
+            type: 'string',
+            uniqueItems: true,
+          },
+          question: {
+            type: 'string',
+          },
+          answer: {
+            type: 'string',
+          },
+          description: {
+            type: 'string',
+          },
+        },
+      },
+      Questions: {
+        type: 'array',
+        $ref: '#/components/schemas/Question',
+      },
+      Result: {
+        required: [
+          '_id',
+          'user',
+          'test',
+        ],
+        properties: {
+          _id: {
+            type: 'string',
+            uniqueItems: true,
+          },
+          user: {
+            type: 'string',
+          },
+          test: {
+            type: 'string',
+          },
+          status: {
+            type: 'string',
+            enum: ['On-going', 'Completed'],
+          },
+          company: {
+            type: 'string',
+          },
+          questions_answered: {
+            type: 'number',
+          },
+          ellapsed_time: {
+            type: 'string',
+          },
+          completed_date: {
+            type: 'string',
+          },
+          score: {
+            type: 'number',
+          },
+          total: {
+            type: 'number',
+          },
+          passing_percentage: {
+            type: 'number',
+          },
+          notes: {
+            type: 'string',
+          },
+        },
+      },
+      Results: {
+        type: 'array',
+        $ref: '#/components/schemas/Result',
+      },
+      Skill: {
+        required: [
+          '_id',
+          'name',
+        ],
+        properties: {
+          _id: {
+            type: 'string',
+            uniqueItems: true,
+          },
+          name: {
+            type: 'string',
+          },
+          description: {
+            type: 'string',
+          },
+        },
+      },
+      Skills: {
+        type: 'array',
+        $ref: '#/components/schemas/Skill',
+      },
+      Test: {
+        required: [
+          '_id',
+          'name',
+          'time_limit',
+        ],
+        properties: {
+          _id: {
+            type: 'string',
+            uniqueItems: true,
+          },
+          name: {
+            type: 'string',
+          },
+          time_limit: {
+            type: 'string',
+          },
+          categories: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+          skills: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+          questions: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+          difficulty: {
+            type: 'string',
+            enum: ['Easy', 'Intermediate', 'Hard'],
+          },
+          description: {
+            type: 'string',
+          },
+        },
+      },
+      Tests: {
+        type: 'array',
+        $ref: '#/components/schemas/Test',
+      },
+    },
+    parameters: {
+      limit: {
+        name: 'limit',
+        in: 'query',
+        description: 'Number of records',
+        schema: {
+          type: 'integer',
+          format: 'int32',
+        },
+      },
+      skip: {
+        name: 'skip',
+        in: 'query',
+        description: 'Number of records that will be skipped',
+        schema: {
+          type: 'integer',
+          format: 'int32',
+        },
+      },
+    },
+  },
+  security: {
+    basicAuth: [],
   },
   paths: {
     '/login': {
@@ -49,7 +304,7 @@ module.exports = {
             in: 'body',
             description: 'User email',
             schema: {
-              $ref: '#/definitions/Login',
+              $ref: '#/components/schemas/Login',
             },
           },
         ],
@@ -63,7 +318,7 @@ module.exports = {
                   type: 'string',
                 },
                 user: {
-                  $ref: '#/definitions/User',
+                  $ref: '#/components/schemas/User',
                 },
               },
             },
@@ -87,7 +342,7 @@ module.exports = {
             in: 'body',
             description: 'User that we want to create',
             schema: {
-              $ref: '#/definitions/User',
+              $ref: '#/components/schemas/User',
             },
           },
         ],
@@ -99,7 +354,7 @@ module.exports = {
           200: {
             description: 'New user is created',
             schema: {
-              $ref: '#/definitions/User',
+              $ref: '#/components/schemas/User',
             },
           },
         },
@@ -111,14 +366,23 @@ module.exports = {
         security: [
           {
             cookieAuth: [],
+            basicAuth: [],
           },
         ],
         summary: 'Get all users in system',
+        parameters: [
+          {
+            $ref: '#/components/parameters/limit',
+          },
+          {
+            $ref: '#/components/parameters/skip',
+          },
+        ],
         responses: {
           200: {
             description: 'OK',
             schema: {
-              $ref: '#/definitions/Users',
+              $ref: '#/components/schemas/Users',
             },
           },
         },
@@ -131,7 +395,9 @@ module.exports = {
           in: 'path',
           required: true,
           description: 'ID of user that we want to find',
-          type: 'string',
+          schema: {
+            type: 'string',
+          },
         },
       ],
       get: {
@@ -147,8 +413,12 @@ module.exports = {
         responses: {
           200: {
             description: 'User is found',
-            schema: {
-              $ref: '#/definitions/User',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/User',
+                },
+              },
             },
           },
         },
@@ -166,8 +436,12 @@ module.exports = {
         responses: {
           200: {
             description: 'User is deleted',
-            schema: {
-              $ref: '#/definitions/User',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/User',
+                },
+              },
             },
           },
         },
@@ -188,15 +462,19 @@ module.exports = {
             in: 'body',
             description: 'User with new values of properties',
             schema: {
-              $ref: '#/definitions/User',
+              $ref: '#/components/schemas/User',
             },
           },
         ],
         responses: {
           200: {
             description: 'User is updated',
-            schema: {
-              $ref: '#/definitions/User',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/User',
+                },
+              },
             },
           },
         },
@@ -218,7 +496,7 @@ module.exports = {
             in: 'body',
             description: 'Company that we want to create',
             schema: {
-              $ref: '#/definitions/Company',
+              $ref: '#/components/schemas/Company',
             },
           },
         ],
@@ -230,7 +508,7 @@ module.exports = {
           200: {
             description: 'New company is created',
             schema: {
-              $ref: '#/definitions/Company',
+              $ref: '#/components/schemas/Company',
             },
           },
         },
@@ -249,7 +527,7 @@ module.exports = {
           200: {
             description: 'OK',
             schema: {
-              $ref: '#/definitions/Companies',
+              $ref: '#/components/schemas/Companies',
             },
           },
         },
@@ -279,7 +557,7 @@ module.exports = {
           200: {
             description: 'Company is found',
             schema: {
-              $ref: '#/definitions/Company',
+              $ref: '#/components/schemas/Company',
             },
           },
         },
@@ -298,7 +576,7 @@ module.exports = {
           200: {
             description: 'Company is deleted',
             schema: {
-              $ref: '#/definitions/Company',
+              $ref: '#/components/schemas/Company',
             },
           },
         },
@@ -319,7 +597,7 @@ module.exports = {
             in: 'body',
             description: 'Company with new values of properties',
             schema: {
-              $ref: '#/definitions/Company',
+              $ref: '#/components/schemas/Company',
             },
           },
         ],
@@ -327,7 +605,7 @@ module.exports = {
           200: {
             description: 'Company is updated',
             schema: {
-              $ref: '#/definitions/Company',
+              $ref: '#/components/schemas/Company',
             },
           },
         },
@@ -349,7 +627,7 @@ module.exports = {
             in: 'body',
             description: 'Category that we want to create',
             schema: {
-              $ref: '#/definitions/Category',
+              $ref: '#/components/schemas/Category',
             },
           },
         ],
@@ -361,7 +639,7 @@ module.exports = {
           200: {
             description: 'New category is created',
             schema: {
-              $ref: '#/definitions/Category',
+              $ref: '#/components/schemas/Category',
             },
           },
         },
@@ -380,7 +658,7 @@ module.exports = {
           200: {
             description: 'OK',
             schema: {
-              $ref: '#/definitions/Categories',
+              $ref: '#/components/schemas/Categories',
             },
           },
         },
@@ -410,7 +688,7 @@ module.exports = {
           200: {
             description: 'Category is found',
             schema: {
-              $ref: '#/definitions/Category',
+              $ref: '#/components/schemas/Category',
             },
           },
         },
@@ -429,7 +707,7 @@ module.exports = {
           200: {
             description: 'Category is deleted',
             schema: {
-              $ref: '#/definitions/Category',
+              $ref: '#/components/schemas/Category',
             },
           },
         },
@@ -450,7 +728,7 @@ module.exports = {
             in: 'body',
             description: 'Category with new values of properties',
             schema: {
-              $ref: '#/definitions/Category',
+              $ref: '#/components/schemas/Category',
             },
           },
         ],
@@ -458,7 +736,7 @@ module.exports = {
           200: {
             description: 'Category is updated',
             schema: {
-              $ref: '#/definitions/Category',
+              $ref: '#/components/schemas/Category',
             },
           },
         },
@@ -480,7 +758,7 @@ module.exports = {
             in: 'body',
             description: 'Question that we want to create',
             schema: {
-              $ref: '#/definitions/Question',
+              $ref: '#/components/schemas/Question',
             },
           },
         ],
@@ -492,7 +770,7 @@ module.exports = {
           200: {
             description: 'New question is created',
             schema: {
-              $ref: '#/definitions/Question',
+              $ref: '#/components/schemas/Question',
             },
           },
         },
@@ -511,7 +789,7 @@ module.exports = {
           200: {
             description: 'OK',
             schema: {
-              $ref: '#/definitions/Questions',
+              $ref: '#/components/schemas/Questions',
             },
           },
         },
@@ -541,7 +819,7 @@ module.exports = {
           200: {
             description: 'Question is found',
             schema: {
-              $ref: '#/definitions/Question',
+              $ref: '#/components/schemas/Question',
             },
           },
         },
@@ -560,7 +838,7 @@ module.exports = {
           200: {
             description: 'Question is deleted',
             schema: {
-              $ref: '#/definitions/Question',
+              $ref: '#/components/schemas/Question',
             },
           },
         },
@@ -581,7 +859,7 @@ module.exports = {
             in: 'body',
             description: 'Question with new values of properties',
             schema: {
-              $ref: '#/definitions/Question',
+              $ref: '#/components/schemas/Question',
             },
           },
         ],
@@ -589,7 +867,7 @@ module.exports = {
           200: {
             description: 'Question is updated',
             schema: {
-              $ref: '#/definitions/Question',
+              $ref: '#/components/schemas/Question',
             },
           },
         },
@@ -611,7 +889,7 @@ module.exports = {
             in: 'body',
             description: 'Result that we want to create',
             schema: {
-              $ref: '#/definitions/Result',
+              $ref: '#/components/schemas/Result',
             },
           },
         ],
@@ -623,7 +901,7 @@ module.exports = {
           200: {
             description: 'New result is created',
             schema: {
-              $ref: '#/definitions/Result',
+              $ref: '#/components/schemas/Result',
             },
           },
         },
@@ -642,7 +920,7 @@ module.exports = {
           200: {
             description: 'OK',
             schema: {
-              $ref: '#/definitions/Results',
+              $ref: '#/components/schemas/Results',
             },
           },
         },
@@ -672,7 +950,7 @@ module.exports = {
           200: {
             description: 'Result is found',
             schema: {
-              $ref: '#/definitions/Result',
+              $ref: '#/components/schemas/Result',
             },
           },
         },
@@ -691,7 +969,7 @@ module.exports = {
           200: {
             description: 'Result is deleted',
             schema: {
-              $ref: '#/definitions/Result',
+              $ref: '#/components/schemas/Result',
             },
           },
         },
@@ -712,7 +990,7 @@ module.exports = {
             in: 'body',
             description: 'Result with new values of properties',
             schema: {
-              $ref: '#/definitions/Result',
+              $ref: '#/components/schemas/Result',
             },
           },
         ],
@@ -720,7 +998,7 @@ module.exports = {
           200: {
             description: 'Result is updated',
             schema: {
-              $ref: '#/definitions/Result',
+              $ref: '#/components/schemas/Result',
             },
           },
         },
@@ -742,7 +1020,7 @@ module.exports = {
             in: 'body',
             description: 'Skill that we want to create',
             schema: {
-              $ref: '#/definitions/Skill',
+              $ref: '#/components/schemas/Skill',
             },
           },
         ],
@@ -754,7 +1032,7 @@ module.exports = {
           200: {
             description: 'New skill is created',
             schema: {
-              $ref: '#/definitions/Skill',
+              $ref: '#/components/schemas/Skill',
             },
           },
         },
@@ -773,7 +1051,7 @@ module.exports = {
           200: {
             description: 'OK',
             schema: {
-              $ref: '#/definitions/Skills',
+              $ref: '#/components/schemas/Skills',
             },
           },
         },
@@ -803,7 +1081,7 @@ module.exports = {
           200: {
             description: 'Skill is found',
             schema: {
-              $ref: '#/definitions/Skill',
+              $ref: '#/components/schemas/Skill',
             },
           },
         },
@@ -822,7 +1100,7 @@ module.exports = {
           200: {
             description: 'Skill is deleted',
             schema: {
-              $ref: '#/definitions/Skill',
+              $ref: '#/components/schemas/Skill',
             },
           },
         },
@@ -843,7 +1121,7 @@ module.exports = {
             in: 'body',
             description: 'Skill with new values of properties',
             schema: {
-              $ref: '#/definitions/Skill',
+              $ref: '#/components/schemas/Skill',
             },
           },
         ],
@@ -851,7 +1129,7 @@ module.exports = {
           200: {
             description: 'Skill is updated',
             schema: {
-              $ref: '#/definitions/Skill',
+              $ref: '#/components/schemas/Skill',
             },
           },
         },
@@ -873,7 +1151,7 @@ module.exports = {
             in: 'body',
             description: 'Test that we want to create',
             schema: {
-              $ref: '#/definitions/Test',
+              $ref: '#/components/schemas/Test',
             },
           },
         ],
@@ -885,7 +1163,7 @@ module.exports = {
           200: {
             description: 'New test is created',
             schema: {
-              $ref: '#/definitions/Test',
+              $ref: '#/components/schemas/Test',
             },
           },
         },
@@ -904,7 +1182,7 @@ module.exports = {
           200: {
             description: 'OK',
             schema: {
-              $ref: '#/definitions/Tests',
+              $ref: '#/components/schemas/Tests',
             },
           },
         },
@@ -934,7 +1212,7 @@ module.exports = {
           200: {
             description: 'Test is found',
             schema: {
-              $ref: '#/definitions/Test',
+              $ref: '#/components/schemas/Test',
             },
           },
         },
@@ -953,7 +1231,7 @@ module.exports = {
           200: {
             description: 'Test is deleted',
             schema: {
-              $ref: '#/definitions/Test',
+              $ref: '#/components/schemas/Test',
             },
           },
         },
@@ -974,7 +1252,7 @@ module.exports = {
             in: 'body',
             description: 'Test with new values of properties',
             schema: {
-              $ref: '#/definitions/Test',
+              $ref: '#/components/schemas/Test',
             },
           },
         ],
@@ -982,237 +1260,11 @@ module.exports = {
           200: {
             description: 'Test is updated',
             schema: {
-              $ref: '#/definitions/Test',
+              $ref: '#/components/schemas/Test',
             },
           },
         },
       },
-    },
-  },
-  definitions: {
-    Login: {
-      required: [
-        'email',
-        'password',
-      ],
-      properties: {
-        email: {
-          type: 'string',
-          uniqueItems: true,
-        },
-        password: {
-          type: 'string',
-        },
-      },
-    },
-    User: {
-      required: [
-        'email',
-        '_id',
-      ],
-      properties: {
-        email: {
-          type: 'string',
-          uniqueItems: true,
-        },
-        status: {
-          type: 'string',
-        },
-      },
-    },
-    Users: {
-      type: 'array',
-      $ref: '#/definitions/User',
-    },
-    Company: {
-      required: [
-        'name',
-        'email',
-        '_id',
-      ],
-      properties: {
-        _id: {
-          type: 'string',
-          uniqueItems: true,
-        },
-        email: {
-          type: 'string',
-          uniqueItems: true,
-        },
-      },
-    },
-    Companies: {
-      type: 'array',
-      $ref: '#/definitions/Company',
-    },
-    Category: {
-      required: [
-        '_id',
-        'name',
-      ],
-      properties: {
-        _id: {
-          type: 'string',
-          uniqueItems: true,
-        },
-        name: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-      },
-    },
-    Categories: {
-      type: 'array',
-      $ref: '#/definitions/Category',
-    },
-    Question: {
-      required: [
-        '_id',
-        'question',
-        'answer',
-      ],
-      properties: {
-        _id: {
-          type: 'string',
-          uniqueItems: true,
-        },
-        question: {
-          type: 'string',
-        },
-        answer: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-      },
-    },
-    Questions: {
-      type: 'array',
-      $ref: '#/definitions/Question',
-    },
-    Result: {
-      required: [
-        '_id',
-        'user',
-        'test',
-      ],
-      properties: {
-        _id: {
-          type: 'string',
-          uniqueItems: true,
-        },
-        user: {
-          type: 'string',
-        },
-        test: {
-          type: 'string',
-        },
-        status: {
-          type: 'string',
-          enum: ['On-going', 'Completed'],
-        },
-        company: {
-          type: 'string',
-        },
-        questions_answered: {
-          type: 'number',
-        },
-        ellapsed_time: {
-          type: 'string',
-        },
-        completed_date: {
-          type: 'string',
-        },
-        score: {
-          type: 'number',
-        },
-        total: {
-          type: 'number',
-        },
-        passing_percentage: {
-          type: 'number',
-        },
-        notes: {
-          type: 'string',
-        },
-      },
-    },
-    Results: {
-      type: 'array',
-      $ref: '#/definitions/Result',
-    },
-    Skill: {
-      required: [
-        '_id',
-        'name',
-      ],
-      properties: {
-        _id: {
-          type: 'string',
-          uniqueItems: true,
-        },
-        name: {
-          type: 'string',
-        },
-        description: {
-          type: 'string',
-        },
-      },
-    },
-    Skills: {
-      type: 'array',
-      $ref: '#/definitions/Skill',
-    },
-    Test: {
-      required: [
-        '_id',
-        'name',
-        'time_limit',
-      ],
-      properties: {
-        _id: {
-          type: 'string',
-          uniqueItems: true,
-        },
-        name: {
-          type: 'string',
-        },
-        time_limit: {
-          type: 'string',
-        },
-        categories: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-        skills: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-        questions: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-        difficulty: {
-          type: 'string',
-          enum: ['Easy', 'Intermediate', 'Hard'],
-        },
-        description: {
-          type: 'string',
-        },
-      },
-    },
-    Tests: {
-      type: 'array',
-      $ref: '#/definitions/Test',
     },
   },
 };
