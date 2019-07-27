@@ -1,11 +1,10 @@
-const getCommonController = require('common/controller');
-const { generateToken, hashPassword } = require('utils/tools');
-const mailer = require('utils/mailer');
-const TokenModel = require('services/token/model');
-const TokenController = require('services/token/controller');
-const CompanyModel = require('services/company/model');
-const Model = require('./model');
-const { CompanyUser } = require('./model');
+import getCommonController from 'common/controller';
+import { generateToken, hashPassword } from 'utils/tools';
+import mailer from 'utils/mailer';
+import TokenModel from 'services/token/model';
+import TokenController from 'services/token/controller';
+import CompanyModel from 'services/company/model';
+import Model, { CompanyUser } from './model';
 
 // custom or override controller below
 const customControllers = {
@@ -102,4 +101,4 @@ const customControllers = {
 
 const controller = getCommonController(Model, customControllers);
 
-module.exports = controller;
+export default controller;

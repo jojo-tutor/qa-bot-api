@@ -1,7 +1,7 @@
-const winston = require('winston');
+import winston from 'winston';
+import 'winston-daily-rotate-file';
 
 const { format, transports } = winston;
-require('winston-daily-rotate-file');
 
 const consoleLogFormat = format.printf(({
   level, message, source = 'server', timestamp,
@@ -41,4 +41,4 @@ logger.error = (error, source = 'server') => {
   logger.log({ level: 'error', message, source });
 };
 
-module.exports = logger;
+export default logger;

@@ -1,4 +1,4 @@
-import faker from 'faker'; // eslint-disable-line
+import faker from 'faker';
 import Model from 'services/category/model';
 
 const fakerModel = () => ({

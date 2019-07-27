@@ -1,47 +1,47 @@
 // set environment variables
-const envPath = require('path').resolve(process.cwd(), process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env');
-require('dotenv').config({ path: envPath });
+import 'config/dotenv';
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const swaggerUi = require('swagger-ui-express');
+// modules
+import express from 'express';
+import bodyParser from 'body-parser';
+import swaggerUi from 'swagger-ui-express';
 
 // local modules - logger
-const logger = require('utils/logger');
+import logger from 'utils/logger';
 
 // local modules - custom error
-const AppError = require('utils/error');
+import AppError from 'utils/error';
 
 // local modules - tools
-const { getStatusCode } = require('utils/tools');
+import { getStatusCode } from 'utils/tools';
 
 // local file - swagger
-const swaggerDocument = require('docs/swagger');
+import swaggerDocument from 'docs/swagger';
 
 // local file - middlewares
-const { sessionMiddleware, authMiddleware } = require('common/middleware');
+import { sessionMiddleware, authMiddleware } from 'common/middleware';
 
 // local file - basic auth
-const basicAuth = require('config/basicAuth');
+import basicAuth from 'config/basicAuth';
 
 // local file - passport
-const passport = require('config/passport');
+import passport from 'config/passport';
 
 // local file - database
-const database = require('config/database');
+import database from 'config/database';
 
 // local file - database
-const setupUser = require('config/superAdmin');
+import setupUser from 'config/superAdmin';
 
 // local modules - routes
-const main = require('services/main/route');
-const companies = require('services/company/route');
-const users = require('services/user/route');
-const questions = require('services/question/route');
-const tests = require('services/test/route');
-const categories = require('services/category/route');
-const results = require('services/result/route');
-const skills = require('services/skill/route');
+import main from 'services/main/route';
+import companies from 'services/company/route';
+import users from 'services/user/route';
+import questions from 'services/question/route';
+import tests from 'services/test/route';
+import categories from 'services/category/route';
+import results from 'services/result/route';
+import skills from 'services/skill/route';
 
 // express
 const app = express();
@@ -111,4 +111,4 @@ app.use((error, req, res, next) => { // eslint-disable-line
   });
 });
 
-module.exports = app;
+export default app;

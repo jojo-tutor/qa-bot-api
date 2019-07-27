@@ -57,4 +57,4 @@ const getCommonRoute = (router, controller, middlewares = []) => {
   return router;
 };
 
-module.exports = getCommonRoute;
+export default getCommonRoute;

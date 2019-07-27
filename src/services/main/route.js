@@ -1,13 +1,12 @@
+import express from 'express';
+import passport from 'passport';
+
 import mocks from 'mocks';
-
-const express = require('express');
-const passport = require('passport');
-
-const AppError = require('utils/error');
-const { authMiddleware, getPermissions } = require('common/middleware');
-const TokenController = require('services/token/controller');
-const CompanyController = require('services/company/controller');
-const controller = require('./controller');
+import AppError from 'utils/error';
+import { authMiddleware, getPermissions } from 'common/middleware';
+import TokenController from 'services/token/controller';
+import CompanyController from 'services/company/controller';
+import controller from './controller';
 
 const router = express.Router();
 
@@ -104,4 +103,4 @@ if (process.env.NODE_ENV !== 'production') {
   router.delete('/mocks', mocks.delete);
 }
 
-module.exports = router;
+export default router;
