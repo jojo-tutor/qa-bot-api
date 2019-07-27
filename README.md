@@ -14,12 +14,12 @@ https://qa-bot-api.herokuapp.com/docs
 git clone https://github.com/jojo-tutor/qa-bot-api.git
 cd qa-bot-api && yarn && yarn dev
 ```
-## Important
-Notes: For security purposes, please do not share your config files!<br>
+## Config
 This app will not work as intended if there are no config files.<br>
-The files should be located at `shopping-cart-dnd/config/.env` in development.<br>
-And at `shopping-cart-dnd/config/.env.production` in production.<br>
-They both should look like this:
+For security purposes, do not share your config files!<br>
+Development: `qa-bot-api/.env`<br>
+Production: `qa-bot-api/.env.production`<br>
+Format:
 ```env
 #app
 PORT=4001
