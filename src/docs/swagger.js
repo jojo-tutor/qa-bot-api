@@ -24,16 +24,15 @@ const getEntityPath = (Entities, Entity, entities, entity) => ({
         basicAuth: [],
       },
     ],
-    parameters: [
-      {
-        name: entity,
-        in: 'body',
-        description: `${Entity} that we want to create`,
-        schema: {
-          $ref: `#/components/schemas/${Entity}`,
+    requestBody: {
+      content: {
+        'application/json': {
+          schema: {
+            $ref: `#/components/schemas/${Entity}`,
+          },
         },
       },
-    ],
+    },
     summary: `Create new ${entity} in system`,
     responses: getResponses200(Entity),
   },
@@ -113,16 +112,15 @@ const getEntityByIdPath = (Entities, Entity, entities, entity) => ({
         basicAuth: [],
       },
     ],
-    parameters: [
-      {
-        name: entity,
-        in: 'body',
-        description: `${Entity} with new values of properties`,
-        schema: {
-          $ref: `#/components/schemas/${Entity}`,
+    requestBody: {
+      content: {
+        'application/json': {
+          schema: {
+            $ref: `#/components/schemas/${Entity}`,
+          },
         },
       },
-    ],
+    },
     responses: getResponses200(Entity),
   },
 });
@@ -192,6 +190,9 @@ export default {
           email: {
             type: 'string',
             uniqueItems: true,
+          },
+          company: {
+            type: 'string',
           },
           status: {
             type: 'string',
@@ -428,16 +429,15 @@ export default {
             basicAuth: [],
           },
         ],
-        parameters: [
-          {
-            name: 'email',
-            in: 'body',
-            description: 'User email',
-            schema: {
-              $ref: '#/components/schemas/Login',
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/Login',
+              },
             },
           },
-        ],
+        },
         summary: 'Login user',
         responses: getResponses200('Users'),
       },
