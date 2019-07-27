@@ -1,12 +1,12 @@
-const passport = require('passport');
-const bcrypt = require('bcrypt');
-const LocalStrategy = require('passport-local').Strategy;
+import passport from 'passport';
+import bcrypt from 'bcrypt';
+import { Strategy as LocalStrategy } from 'passport-local';
 
 // local modules - custom error
-const AppError = require('utils/error');
+import AppError from 'utils/error';
 
 // local modules - models
-const UserModel = require('services/user/model');
+import UserModel from 'services/user/model';
 
 passport.serializeUser((user, done) => done(null, user.email));
 passport.deserializeUser(async (email, done) => {
@@ -77,4 +77,4 @@ passport.use('local-signup', new LocalStrategy(
   },
 ));
 
-module.exports = passport;
+export default passport;

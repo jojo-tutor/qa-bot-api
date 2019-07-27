@@ -6,4 +6,4 @@ function AppError(name, httpCode, message, isOperational) {
   this.isOperational = isOperational;
 }
 
-module.exports = AppError;
+export default AppError;

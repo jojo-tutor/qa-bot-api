@@ -1,7 +1,7 @@
-const express = require('express');
-const { getPermissions } = require('common/middleware');
-const getCommonRoute = require('common/route');
-const controller = require('./controller');
+import express from 'express';
+import { getPermissions } from 'common/middleware';
+import getCommonRoute from 'common/route';
+import controller from './controller';
 
 const router = express.Router();
 
@@ -28,4 +28,4 @@ router.put('/reset-password', async (req, res, next) => {
 
 const route = getCommonRoute(router, controller, middlewares);
 
-module.exports = route;
+export default route;

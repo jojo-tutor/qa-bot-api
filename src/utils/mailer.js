@@ -1,4 +1,4 @@
-const sgMail = require('@sendgrid/mail');
+import sgMail from '@sendgrid/mail';
 
 // https://github.com/sendgrid/sendgrid-nodejs
 
@@ -30,4 +30,4 @@ const mailer = async ({
   await sgMail.send(msg);
 };
 
-module.exports = mailer;
+export default mailer;

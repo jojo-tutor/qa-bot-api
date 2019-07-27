@@ -73,4 +73,4 @@ const getCommonController = (Model, customControllers = {}) => {
   };
 };
 
-module.exports = getCommonController;
+export default getCommonController;

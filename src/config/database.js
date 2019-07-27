@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const logger = require('utils/logger');
+import mongoose from 'mongoose';
+import logger from 'utils/logger';
 
 const database = ({ onSuccess }) => {
   const dbOptions = { useNewUrlParser: true };
@@ -17,4 +17,4 @@ const database = ({ onSuccess }) => {
   return mongoose;
 };
 
-module.exports = database;
+export default database;

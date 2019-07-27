@@ -3,11 +3,11 @@
 /**
  * Module dependencies.
  */
-require('@babel/polyfill');
+import '@babel/polyfill';
 
-const http = require('http');
-const logger = require('utils/logger');
-const app = require('app');
+import http from 'http';
+import logger from 'utils/logger';
+import app from 'app';
 
 /**
  * Get port from environment and store in Express.

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   /**
    * A user that signed-up without a company
    * Created through sign-up

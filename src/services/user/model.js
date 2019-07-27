@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const { Schema } = mongoose;
 const User = new Schema({
@@ -42,7 +42,7 @@ User.pre('find', function preFind() {
   this.select('-password');
 });
 
-const CompanyUser = new Schema({
+const CompanyUserSchema = new Schema({
   company: {
     type: Schema.Types.ObjectId,
     ref: 'Company',
@@ -50,7 +50,7 @@ const CompanyUser = new Schema({
   },
 });
 
-const Password = new Schema({
+const PasswordSchema = new Schema({
   email: {
     type: String,
     required: true,
@@ -64,6 +64,6 @@ const Password = new Schema({
 // plugins
 User.plugin(uniqueValidator);
 
-module.exports = mongoose.model('User', User);
-module.exports.Password = mongoose.model('Password', Password);
-module.exports.CompanyUser = mongoose.model('CompanyUser', CompanyUser);
+export default mongoose.model('User', User);
+export const Password = mongoose.model('Password', PasswordSchema);
+export const CompanyUser = mongoose.model('CompanyUser', CompanyUserSchema);

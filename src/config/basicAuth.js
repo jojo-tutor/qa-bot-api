@@ -1,8 +1,8 @@
-const auth = require('basic-auth');
-const compare = require('tsscmp');
+import auth from 'basic-auth';
+import compare from 'tsscmp';
 
 // local modules - custom error
-const AppError = require('utils/error');
+import AppError from 'utils/error';
 
 const isValid = (name, pass) => {
   let valid = true;
@@ -25,4 +25,4 @@ const authMiddleware = (req, res, next) => {
 };
 
 
-module.exports = authMiddleware;
+export default authMiddleware;

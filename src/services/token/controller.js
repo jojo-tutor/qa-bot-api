@@ -1,6 +1,6 @@
-const getCommonController = require('common/controller');
-const AppError = require('utils/error');
-const Model = require('./model');
+import getCommonController from 'common/controller';
+import AppError from 'utils/error';
+import Model from './model';
 
 // custom or override controller below
 const customControllers = {
@@ -25,4 +25,4 @@ const customControllers = {
 
 const controller = getCommonController(Model, customControllers);
 
-module.exports = controller;
+export default controller;

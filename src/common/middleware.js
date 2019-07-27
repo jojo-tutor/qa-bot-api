@@ -1,13 +1,15 @@
-const mongoose = require('mongoose');
-const session = require('express-session');
-const mergeWith = require('lodash/mergeWith');
-const MongoStore = require('connect-mongo')(session);
+import mongoose from 'mongoose';
+import session from 'express-session';
+import mergeWith from 'lodash/mergeWith';
+import connectMongo from 'connect-mongo';
 
-const logger = require('utils/logger');
-const AppError = require('utils/error');
-const permissionsLookupList = require('config/permissions');
+import logger from 'utils/logger';
+import AppError from 'utils/error';
+import permissionsLookupList from 'config/permissions';
 
-const sessionMiddleware = session({
+const MongoStore = connectMongo(session);
+
+export const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
@@ -17,7 +19,7 @@ const sessionMiddleware = session({
   },
 });
 
-const authMiddleware = async (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
@@ -58,7 +60,7 @@ const hasPermission = (permissionList, resourcePermission, role) => {
   return resourcePermissions.permissions.includes(permission);
 };
 
-const getPermissions = async (req, res, next) => {
+export const getPermissions = async (req, res, next) => {
   const [url] = req.originalUrl.split('/').filter(Boolean);
   const [base] = url.split('?');
   const permissions = `${base}:${req.method.toLowerCase()}`;
@@ -71,10 +73,4 @@ const getPermissions = async (req, res, next) => {
   }
 
   return next(new AppError('AccessError', 403, 'Access denied', true));
-};
-
-module.exports = {
-  sessionMiddleware,
-  authMiddleware,
-  getPermissions,
 };
