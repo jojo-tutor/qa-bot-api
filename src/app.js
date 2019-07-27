@@ -30,7 +30,7 @@ import passport from 'config/passport';
 // local file - database
 import database from 'config/database';
 
-// local file - database
+// local file - setup super admin
 import setupUser from 'config/superAdmin';
 
 // local modules - routes
