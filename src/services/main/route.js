@@ -14,6 +14,10 @@ router.get('/', (req, res) => res.status(200).json({
   server_locale: new Date().toUTCString(),
 }));
 
+router.get('/session', authMiddleware, (req, res) => {
+  res.status(200).json(req.user);
+});
+
 router.post('/signup', async (req, res, next) => {
   const signupController = req.body.company_name
     ? CompanyController.createRecord
