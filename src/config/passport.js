@@ -11,7 +11,7 @@ import UserModel from 'services/user/model';
 passport.serializeUser((user, done) => done(null, user.email));
 passport.deserializeUser(async (email, done) => {
   try {
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email }, '-password');
     if (!user) {
       done(new AppError('AuthError', 401, 'Account has been deleted', true));
       return;
@@ -20,6 +20,7 @@ passport.deserializeUser(async (email, done) => {
       done(new AppError('AuthError', 401, 'Account is not active', true));
       return;
     }
+
     done(null, user);
   } catch (error) {
     done(error);
