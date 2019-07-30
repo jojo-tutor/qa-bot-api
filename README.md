@@ -14,6 +14,7 @@ https://qa-bot-api.herokuapp.com/docs
 git clone https://github.com/jojo-tutor/qa-bot-api.git
 cd qa-bot-api && yarn && yarn dev
 ```
+
 ## Config
 This app will not work as intended if there are no config files.<br>
 For security purposes, do not share your config files!<br>
@@ -68,6 +69,11 @@ PM2 (Production Process Manager)<br>
 Winston (Logger)<br>
 SendGrid (Email Delivery Platform)<br>
 Swagger (API Documentation)<br>
+
+## Apache Benchmark
+```sh
+ab -n 1000 -c 10 -H "Cookie: access_token=VALUE; connect.sid=VALUE" -H "Authorization: Basic VALUE" https://HOST/ENDPOINT
+```
 
 ## Authors
 [Jojo E. Tutor](https://www.facebook.com/jojo-tutor "View Jojo's FB Profile")
