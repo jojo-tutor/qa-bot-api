@@ -17,8 +17,12 @@ const isValid = (name, pass) => {
 const authMiddleware = (req, res, next) => {
   const credentials = auth(req);
 
-  if (!credentials || !isValid(credentials.name, credentials.pass)) {
+  if (!credentials) {
     return next(new AppError('AuthError', 401, 'Authorization required', true));
+  }
+
+  if (!isValid(credentials.name, credentials.pass)) {
+    return next(new AppError('AuthError', 401, 'Authorization invalid', true));
   }
 
   return next();

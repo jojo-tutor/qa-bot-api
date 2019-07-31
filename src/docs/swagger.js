@@ -1,22 +1,21 @@
-
-const getResponses200 = entity => ({
+const getResponses = Entity => ({
   200: {
     description: 'Ok',
     content: {
       'application/json': {
         schema: {
-          $ref: `#/components/schemas/${entity}`,
+          $ref: `#/components/schemas/${Entity}`,
         },
       },
     },
   },
 });
 
-const getEntityPath = (Entities, Entity, entities, entity) => ({
+const getEntityPath = Entity => ({
   // POST
   post: {
     tags: [
-      Entities,
+      Entity,
     ],
     security: [
       {
@@ -33,13 +32,13 @@ const getEntityPath = (Entities, Entity, entities, entity) => ({
         },
       },
     },
-    summary: `Create new ${entity} in system`,
-    responses: getResponses200(Entity),
+    summary: `Create new ${Entity} in system`,
+    responses: getResponses(Entity),
   },
   // GET
   get: {
     tags: [
-      Entities,
+      Entity,
     ],
     security: [
       {
@@ -55,18 +54,18 @@ const getEntityPath = (Entities, Entity, entities, entity) => ({
         $ref: '#/components/parameters/skip',
       },
     ],
-    summary: `Get all ${entities} in system`,
-    responses: getResponses200(Entities),
+    summary: `Get all ${Entity} in system`,
+    responses: getResponses(`${Entity}Grid`),
   },
 });
 
-const getEntityByIdPath = (Entities, Entity, entities, entity) => ({
+const getEntityByIdPath = Entity => ({
   parameters: [
     {
-      name: `${entity}Id`,
+      name: `${Entity.toLowerCase()}Id`,
       in: 'path',
       required: true,
-      description: `ID of ${entity} that we want to find`,
+      description: `ID of ${Entity} that we want to find`,
       schema: {
         type: 'string',
       },
@@ -75,7 +74,7 @@ const getEntityByIdPath = (Entities, Entity, entities, entity) => ({
   // GET /id
   get: {
     tags: [
-      Entities,
+      Entity,
     ],
     security: [
       {
@@ -83,14 +82,14 @@ const getEntityByIdPath = (Entities, Entity, entities, entity) => ({
         basicAuth: [],
       },
     ],
-    summary: `Get ${entity} with given ID`,
-    responses: getResponses200(Entity),
+    summary: `Get ${Entity} with given ID`,
+    responses: getResponses(Entity),
   },
   // DELETE /id
   delete: {
-    summary: `Delete ${entity} with given ID`,
+    summary: `Delete ${Entity} with given ID`,
     tags: [
-      Entities,
+      Entity,
     ],
     security: [
       {
@@ -98,13 +97,13 @@ const getEntityByIdPath = (Entities, Entity, entities, entity) => ({
         basicAuth: [],
       },
     ],
-    responses: getResponses200(Entity),
+    responses: getResponses(Entity),
   },
   // PUT /id
   put: {
-    summary: `Update ${entity} with given ID`,
+    summary: `Update ${Entity} with given ID`,
     tags: [
-      Entities,
+      Entity,
     ],
     security: [
       {
@@ -121,7 +120,28 @@ const getEntityByIdPath = (Entities, Entity, entities, entity) => ({
         },
       },
     },
-    responses: getResponses200(Entity),
+    responses: getResponses(Entity),
+  },
+});
+
+const getEntityGrid = Entity => ({
+  properties: {
+    list: {
+      type: 'array',
+      $ref: `#/components/schemas/${Entity}`,
+    },
+    count: {
+      type: 'integer',
+    },
+    pages: {
+      type: 'integer',
+    },
+    limit: {
+      type: 'integer',
+    },
+    skip: {
+      type: 'integer',
+    },
   },
 });
 
@@ -144,7 +164,7 @@ export default {
   servers: [
     {
       url: '/',
-      description: 'Rest API',
+      description: 'v1',
     },
   ],
   tags: [
@@ -199,10 +219,7 @@ export default {
           },
         },
       },
-      Users: {
-        type: 'array',
-        $ref: '#/components/schemas/User',
-      },
+      UserGrid: getEntityGrid('User'),
       Company: {
         required: [
           'name',
@@ -220,10 +237,7 @@ export default {
           },
         },
       },
-      Companies: {
-        type: 'array',
-        $ref: '#/components/schemas/Company',
-      },
+      CompanyGrid: getEntityGrid('Company'),
       Category: {
         required: [
           '_id',
@@ -242,10 +256,7 @@ export default {
           },
         },
       },
-      Categories: {
-        type: 'array',
-        $ref: '#/components/schemas/Category',
-      },
+      CategoryGrid: getEntityGrid('Category'),
       Question: {
         required: [
           '_id',
@@ -268,10 +279,7 @@ export default {
           },
         },
       },
-      Questions: {
-        type: 'array',
-        $ref: '#/components/schemas/Question',
-      },
+      QuestionGrid: getEntityGrid('Question'),
       Result: {
         required: [
           '_id',
@@ -319,10 +327,7 @@ export default {
           },
         },
       },
-      Results: {
-        type: 'array',
-        $ref: '#/components/schemas/Result',
-      },
+      ResultGrid: getEntityGrid('Result'),
       Skill: {
         required: [
           '_id',
@@ -341,10 +346,7 @@ export default {
           },
         },
       },
-      Skills: {
-        type: 'array',
-        $ref: '#/components/schemas/Skill',
-      },
+      SkillGrid: getEntityGrid('Skill'),
       Test: {
         required: [
           '_id',
@@ -389,10 +391,7 @@ export default {
           },
         },
       },
-      Tests: {
-        type: 'array',
-        $ref: '#/components/schemas/Test',
-      },
+      TestGrid: getEntityGrid('Test'),
     },
     parameters: {
       limit: {
@@ -439,29 +438,29 @@ export default {
           },
         },
         summary: 'Login user',
-        responses: getResponses200('Users'),
+        responses: getResponses('User'),
       },
     },
 
-    '/users': getEntityPath('Users', 'User', 'users', 'user'),
-    '/users/{userId}': getEntityByIdPath('Users', 'User', 'users', 'user'),
+    '/users': getEntityPath('User'),
+    '/users/{userId}': getEntityByIdPath('User'),
 
-    '/companies': getEntityPath('Companies', 'Company', 'companies', 'company'),
-    '/companies/{companyId}': getEntityByIdPath('Companies', 'Company', 'companies', 'company'),
+    '/companies': getEntityPath('Company'),
+    '/companies/{companyId}': getEntityByIdPath('Company'),
 
-    '/categories': getEntityPath('Categories', 'Category', 'categories', 'category'),
-    '/categories/{categoryId}': getEntityByIdPath('Categories', 'Category', 'categories', 'category'),
+    '/categories': getEntityPath('Category'),
+    '/categories/{categoryId}': getEntityByIdPath('Category'),
 
-    '/questions': getEntityPath('Questions', 'Question', 'questions', 'question'),
-    '/questions/{questionId}': getEntityByIdPath('Questions', 'Question', 'questions', 'question'),
+    '/questions': getEntityPath('Question'),
+    '/questions/{questionId}': getEntityByIdPath('Question'),
 
-    '/results': getEntityPath('Results', 'Result', 'results', 'result'),
-    '/results/{resultId}': getEntityByIdPath('Results', 'Result', 'results', 'result'),
+    '/results': getEntityPath('Result'),
+    '/results/{resultId}': getEntityByIdPath('Result'),
 
-    '/skills': getEntityPath('Skills', 'Skill', 'skills', 'Skills'),
-    '/skills/{skillId}': getEntityByIdPath('Skills', 'Skill', 'skills', 'Skills'),
+    '/skills': getEntityPath('Skill'),
+    '/skills/{skillId}': getEntityByIdPath('Skill'),
 
-    '/tests': getEntityPath('Tests', 'Test', 'tests', 'Tests'),
-    '/tests/{testId}': getEntityByIdPath('Tests', 'Test', 'tests', 'Tests'),
+    '/tests': getEntityPath('Test'),
+    '/tests/{testId}': getEntityByIdPath('Test'),
   },
 };
