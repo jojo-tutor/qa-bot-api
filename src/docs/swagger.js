@@ -1,5 +1,5 @@
 
-const getResponses200 = entity => ({
+const getResponses = entity => ({
   200: {
     description: 'Ok',
     content: {
@@ -34,7 +34,7 @@ const getEntityPath = (Entities, Entity, entities, entity) => ({
       },
     },
     summary: `Create new ${entity} in system`,
-    responses: getResponses200(Entity),
+    responses: getResponses(Entity),
   },
   // GET
   get: {
@@ -56,7 +56,7 @@ const getEntityPath = (Entities, Entity, entities, entity) => ({
       },
     ],
     summary: `Get all ${entities} in system`,
-    responses: getResponses200(Entities),
+    responses: getResponses(Entities),
   },
 });
 
@@ -84,7 +84,7 @@ const getEntityByIdPath = (Entities, Entity, entities, entity) => ({
       },
     ],
     summary: `Get ${entity} with given ID`,
-    responses: getResponses200(Entity),
+    responses: getResponses(Entity),
   },
   // DELETE /id
   delete: {
@@ -98,7 +98,7 @@ const getEntityByIdPath = (Entities, Entity, entities, entity) => ({
         basicAuth: [],
       },
     ],
-    responses: getResponses200(Entity),
+    responses: getResponses(Entity),
   },
   // PUT /id
   put: {
@@ -121,7 +121,7 @@ const getEntityByIdPath = (Entities, Entity, entities, entity) => ({
         },
       },
     },
-    responses: getResponses200(Entity),
+    responses: getResponses(Entity),
   },
 });
 
@@ -439,7 +439,7 @@ export default {
           },
         },
         summary: 'Login user',
-        responses: getResponses200('Users'),
+        responses: getResponses('Users'),
       },
     },
 
