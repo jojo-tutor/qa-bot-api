@@ -10,12 +10,7 @@ const getItems = count => new Array(count).fill(true).map(fakerModel);
 
 const create = async (count = 10) => {
   const items = getItems(count);
-  try {
-    const result = await Model.create(items);
-    return result;
-  } catch (error) {
-    return error.message;
-  }
+  return Model.create(items);
 };
 
 const del = async (count = 10) => {
