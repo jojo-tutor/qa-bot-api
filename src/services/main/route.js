@@ -19,26 +19,23 @@ router.get('/session', authMiddleware, (req, res) => {
 });
 
 router.post('/signup', async (req, res, next) => {
-  const signupController = req.body.company_name
-    ? CompanyController.createRecord
-    : controller.signup;
-  const name = req.body.company_name;
+  try {
+    const signupController = req.body.company_name
+      ? CompanyController.createRecord
+      : controller.signup;
+    const name = req.body.company_name;
 
-  const { result, error } = await signupController({ ...req.body, name });
-  if (error) {
-    next(error);
-  } else {
+    const result = await signupController({ ...req.body, name });
     res.status(200).json(result);
+  } catch (error) {
+    next(error);
   }
 });
 
 router.get('/signup/validate', async (req, res, next) => {
   try {
     // check token
-    const { result, error: tokenError } = await TokenController.validateToken(req.query.token);
-    if (tokenError) {
-      return next(tokenError);
-    }
+    const result = await TokenController.validateToken(req.query.token);
 
     req.body.email = result.email;
 
@@ -62,11 +59,31 @@ router.get('/signup/validate', async (req, res, next) => {
 });
 
 router.get('/invite/validate', async (req, res, next) => {
-  const { result, error } = await controller.inviteValidate(req.query);
-  if (error) {
-    next(error);
-  } else {
+  const result = await TokenController.validateToken(req.query.token).catch(next);
+  res.status(200).json(result);
+});
+
+
+router.post('/forgot-password', async (req, res, next) => {
+  try {
+    const result = await controller.forgotPassword(req.body).catch(next);
     res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/reset-password', async (req, res, next) => {
+  const result = await TokenController.validateToken(req.query.token).catch(next);
+  res.status(200).json(result);
+});
+
+router.post('/reset-password', async (req, res, next) => {
+  try {
+    const result = await controller.resetPassword(req.body).catch(next);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -93,12 +110,8 @@ router.post('/logout', (req, res) => {
 });
 
 router.get('/logs', authMiddleware, getPermissions, async (req, res, next) => {
-  const { result, error } = await controller.getLogs(req.query);
-  if (error) {
-    next(error);
-  } else {
-    res.status(200).json(result);
-  }
+  const result = await controller.getLogs(req.query).catch(next);
+  res.status(200).json(result);
 });
 
 // mocking: NOT available on production

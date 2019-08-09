@@ -14,12 +14,13 @@ const serviceList = {
 
 const create = async (req, res, next) => {
   try {
-    const { services = [], count = 20 } = req.body;
+    const { services = [], count } = req.body;
+    const itemsCount = Number(count) || 20;
 
     const createAll = services.map(async (key) => {
       if (serviceList[key]) {
         return {
-          [key]: await serviceList[key].create(count),
+          [key]: await serviceList[key].create(itemsCount),
         };
       }
       return {

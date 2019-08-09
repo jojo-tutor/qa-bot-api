@@ -8,76 +8,100 @@ import mailer from 'utils/mailer';
 import TokenModel from 'services/token/model';
 import TokenController from 'services/token/controller';
 import UserModel from 'services/user/model';
+import UserController from 'services/user/controller';
 
 // custom or override controller below
 const customControllers = {
-  async signup(data, { role }) {
-    try {
-      const passwordHash = await hashPassword(data.password);
-      const randomToken = generateToken();
-      const { token } = await TokenModel.create({ token: randomToken, email: data.email });
-      const result = await UserModel.create({
-        email: data.email,
-        password: passwordHash,
-        role: role || 'Guest',
-      });
+  async signup(data, superAdmin = {}) {
+    await new UserModel(data).validate();
 
-      await mailer({
-        to: data.email,
-        subject: 'Welcome to QA-Bot! Confirm Your Email',
-        data: {
-          header: 'You\'re on your way. Let\'s confirm your email address.',
-          description: 'By clicking on the following link you are confirming your email address.',
-          button_label: 'Confirm Email Address',
-          button_link: `${process.env.PORTAL_HOST}/signup/validate?token=${token}`,
-        },
-      });
+    const passwordHash = await hashPassword(data.password);
+    const randomToken = generateToken();
+    const { token } = await TokenModel.create({ token: randomToken, email: data.email });
+    const result = await UserModel.create({
+      email: data.email,
+      password: passwordHash,
+      role: superAdmin.role || 'Guest',
+    });
 
-      return { result };
-    } catch (error) {
-      return { error };
-    }
+    await mailer({
+      to: data.email,
+      subject: 'Welcome to QA-Bot! Confirm Your Email',
+      data: {
+        header: 'You\'re on your way. Let\'s confirm your email address.',
+        description: 'By clicking on the following link you are confirming your email address.',
+        button_label: 'Confirm Email Address',
+        button_link: `${process.env.PORTAL_HOST}/signup/validate?token=${token}`,
+      },
+    });
+
+    return result;
   },
 
-  async inviteValidate(data) {
-    try {
-      // check token
-      const { result, error } = await TokenController.validateToken(data.token);
+  async forgotPassword(data) {
+    const { email } = data;
 
-      if (error) {
-        return { error };
-      }
+    // get user for given email
+    const user = await UserModel.findOne({ email }).orFail();
 
-      return { result };
-    } catch (error) {
-      return { error };
-    }
+    // generate token
+    const randomToken = generateToken();
+
+    // create token
+    const { token } = await TokenModel.create({ token: randomToken, email });
+
+    // send reset password email link
+    await mailer({
+      to: email,
+      subject: 'Reset Your Password',
+      data: {
+        header: 'You\'re on your way. Let\'s reset your password.',
+        description: 'By clicking on the following link you are resetting password for your account.',
+        button_label: 'Reset Password',
+        button_link: `${process.env.PORTAL_HOST}/reset-password?email=${email}&token=${token}`,
+      },
+    });
+
+    return user;
+  },
+
+  async resetPassword(data) {
+    const { email, token, password } = data;
+
+    // check token
+    const { id: tokenId } = await TokenController.validateToken(token);
+
+    // hash password
+    const passwordHash = await hashPassword(password);
+
+    // update password
+    const user = await UserModel.findOneAndUpdate({ email }, { password: passwordHash });
+
+    await TokenController.updateRecord(tokenId, { status: 'Expired' });
+
+    return user;
   },
 
   async getLogs(data) {
     // Find items logged between today and yesterday only
-    try {
-      const options = {
-        from: new Date() - (24 * 60 * 60 * 1000),
-        until: new Date(),
-        limit: 10,
-        start: 0,
-        order: 'desc',
-        ...data,
-      };
+    const options = {
+      from: new Date() - (24 * 60 * 60 * 1000),
+      until: new Date(),
+      limit: 10,
+      start: 0,
+      order: 'desc',
+      ...data,
+    };
 
-      return new Promise((resolve, reject) => {
-        logger.query(options, (error, result) => {
-          if (error) {
-            reject(new AppError('LoggerQueryError', 400, error.message, true));
-          }
+    return new Promise((resolve, reject) => {
+      logger.query(options, (error, { dailyRotateFile: result }) => {
+        if (error) {
+          reject(new AppError('LoggerQueryError', 400, error.message, true));
+        }
 
-          resolve({ result });
-        });
+        resolve(result);
       });
-    } catch (error) {
-      return { error };
-    }
+    });
   },
 };
 

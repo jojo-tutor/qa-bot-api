@@ -1,5 +1,7 @@
 import sgMail from '@sendgrid/mail';
 
+import AppError from 'utils/error';
+
 // https://github.com/sendgrid/sendgrid-nodejs
 
 const mailer = async ({
@@ -12,7 +14,7 @@ const mailer = async ({
     header, description, button_label, button_link, // eslint-disable-line
   } = data;
 
-  const msg = {
+  const message = {
     to,
     subject,
     templateId,
@@ -27,7 +29,12 @@ const mailer = async ({
   };
 
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  await sgMail.send(msg);
+
+  await sgMail
+    .send(message)
+    .catch((err) => {
+      throw new AppError('SendGridError', 500, err.message, true);
+    });
 };
 
 export default mailer;
