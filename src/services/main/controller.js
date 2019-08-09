@@ -8,6 +8,7 @@ import mailer from 'utils/mailer';
 import TokenModel from 'services/token/model';
 import TokenController from 'services/token/controller';
 import UserModel from 'services/user/model';
+import UserController from 'services/user/controller';
 
 // custom or override controller below
 const customControllers = {
@@ -57,7 +58,7 @@ const customControllers = {
         header: 'You\'re on your way. Let\'s reset your password.',
         description: 'By clicking on the following link you are resetting password for your account.',
         button_label: 'Reset Password',
-        button_link: `${process.env.PORTAL_HOST}/forgot-password/validate?token=${token}`,
+        button_link: `${process.env.PORTAL_HOST}/reset-password?email=${email}&token=${token}`,
       },
     });
 
@@ -65,18 +66,20 @@ const customControllers = {
   },
 
   async resetPassword(data) {
-    const { token } = data;
+    const { email, token, password } = data;
 
     // check token
-    await TokenController.validateToken(token);
+    const { id: tokenId } = await TokenController.validateToken(token);
 
+    // hash password
+    const passwordHash = await hashPassword(password);
 
-    return {};
-  },
+    // update password
+    const user = await UserModel.findOneAndUpdate({ email }, { password: passwordHash });
 
-  async inviteValidate(data) {
-    // check token
-    return TokenController.validateToken(data.token);
+    await TokenController.updateRecord(tokenId, { status: 'Expired' });
+
+    return user;
   },
 
   async getLogs(data) {
