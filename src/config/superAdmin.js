@@ -13,6 +13,7 @@ const setup = async () => {
     const data = {
       email: process.env.SUPER_USER_EMAIL,
       password: process.env.SUPER_USER_PASSWORD,
+      role: 'Super_Admin',
     };
     const { error } = await mainController.signup(data, { role: 'Super_Admin' });
 

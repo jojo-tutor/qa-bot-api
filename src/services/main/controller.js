@@ -11,14 +11,16 @@ import UserModel from 'services/user/model';
 
 // custom or override controller below
 const customControllers = {
-  async signup(data, { role }) {
+  async signup(data, superAdmin = {}) {
+    await new UserModel(data).validate();
+
     const passwordHash = await hashPassword(data.password);
     const randomToken = generateToken();
     const { token } = await TokenModel.create({ token: randomToken, email: data.email });
     const result = await UserModel.create({
       email: data.email,
       password: passwordHash,
-      role: role || 'Guest',
+      role: superAdmin.role || 'Guest',
     });
 
     await mailer({
@@ -33,6 +35,43 @@ const customControllers = {
     });
 
     return result;
+  },
+
+  async forgotPassword(data) {
+    const { email } = data;
+
+    // get user for given email
+    const user = await UserModel.findOne({ email }).orFail();
+
+    // generate token
+    const randomToken = generateToken();
+
+    // create token
+    const { token } = await TokenModel.create({ token: randomToken, email });
+
+    // send reset password email link
+    await mailer({
+      to: email,
+      subject: 'Reset Your Password',
+      data: {
+        header: 'You\'re on your way. Let\'s reset your password.',
+        description: 'By clicking on the following link you are resetting password for your account.',
+        button_label: 'Reset Password',
+        button_link: `${process.env.PORTAL_HOST}/forgot-password/validate?token=${token}`,
+      },
+    });
+
+    return user;
+  },
+
+  async resetPassword(data) {
+    const { token } = data;
+
+    // check token
+    await TokenController.validateToken(token);
+
+
+    return {};
   },
 
   async inviteValidate(data) {
