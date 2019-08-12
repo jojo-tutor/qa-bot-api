@@ -32,7 +32,7 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
-router.get('/signup/validate', async (req, res, next) => {
+router.put('/signup/validate', async (req, res, next) => {
   try {
     // check token
     const result = await TokenController.validateToken(req.query.token);
