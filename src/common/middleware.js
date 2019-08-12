@@ -61,16 +61,20 @@ const hasPermission = (permissionList, resourcePermission, role) => {
 };
 
 export const getPermissions = async (req, res, next) => {
-  const [url] = req.originalUrl.split('/').filter(Boolean);
-  const [base] = url.split('?');
-  const permissions = `${base}:${req.method.toLowerCase()}`;
+  try {
+    const [url] = req.originalUrl.split('/').filter(Boolean);
+    const [base] = url.split('?');
+    const permissions = `${base}:${req.method.toLowerCase()}`;
 
-  const { role } = req.user;
-  logger.info(JSON.stringify({ role, permissions }), 'getPermissions');
+    const { role } = req.user;
+    logger.info(JSON.stringify({ role, permissions }), 'getPermissions');
 
-  if (hasPermission(permissionsLookupList, permissions, role)) {
-    return next();
+    if (hasPermission(permissionsLookupList, permissions, role)) {
+      return next();
+    }
+
+    return next(new AppError('AccessError', 403, 'Access denied', true));
+  } catch (error) {
+    return next(new AppError('InternalServerError', 500, 'Something went wrong with the server', true));
   }
-
-  return next(new AppError('AccessError', 403, 'Access denied', true));
 };

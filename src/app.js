@@ -35,6 +35,7 @@ import setupUser from 'config/superAdmin';
 
 // local modules - routes
 import main from 'services/main/route';
+import token from 'services/token/route';
 import companies from 'services/company/route';
 import users from 'services/user/route';
 import questions from 'services/question/route';
@@ -85,6 +86,7 @@ app.use((req, res, next) => {
 
 // app routes
 app.use('/', checkDBStatus, main);
+app.use('/token', checkDBStatus, token);
 app.use('/companies', authMiddleware, companies);
 app.use('/users', authMiddleware, users);
 app.use('/questions', authMiddleware, questions);

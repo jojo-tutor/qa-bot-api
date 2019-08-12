@@ -63,28 +63,19 @@ router.get('/invite/validate', async (req, res, next) => {
   res.status(200).json(result);
 });
 
-
 router.post('/forgot-password', async (req, res, next) => {
-  try {
-    const result = await controller.forgotPassword(req.body).catch(next);
-    res.status(200).json(result);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/reset-password', async (req, res, next) => {
-  const result = await TokenController.validateToken(req.query.token).catch(next);
+  const result = await controller.forgotPassword(req.body).catch(next);
   res.status(200).json(result);
 });
 
-router.post('/reset-password', async (req, res, next) => {
-  try {
-    const result = await controller.resetPassword(req.body).catch(next);
-    res.status(200).json(result);
-  } catch (error) {
-    next(error);
-  }
+// router.get('/reset-password', async (req, res, next) => {
+//   const result = await TokenController.validateToken(req.query.token).catch(next);
+//   res.status(200).json(result);
+// });
+
+router.put('/reset-password', async (req, res, next) => {
+  const result = await controller.resetPassword(req.body).catch(next);
+  res.status(200).json(result);
 });
 
 router.post('/login', async (req, res, next) => {
