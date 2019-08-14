@@ -5,9 +5,9 @@ import Model from './model';
 // custom or override controller below
 const customControllers = {
   async validateToken(token) {
-    const result = await Model.findOne({ token }) || {};
+    const result = await Model.findOne({ token });
 
-    if (!result.token) {
+    if (!result || !result.token) {
       throw new AppError('InvalidTokenError', 400, 'Token is invalid', true);
     }
 

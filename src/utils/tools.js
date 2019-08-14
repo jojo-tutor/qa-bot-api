@@ -17,6 +17,7 @@ export const getStatusCode = (error) => {
     case 'CastError':
     case 'ValidationError':
     case 'MongoError':
+    case 'DocumentNotFoundError':
       return 400;
     default:
       return isNaN(error.httpCode) ? 500 : parseInt(error.httpCode, 10);

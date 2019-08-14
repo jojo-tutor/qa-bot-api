@@ -58,7 +58,7 @@ const customControllers = {
         header: 'You\'re on your way. Let\'s reset your password.',
         description: 'By clicking on the following link you are resetting password for your account.',
         button_label: 'Reset Password',
-        button_link: `${process.env.PORTAL_HOST}/reset-password?email=${email}&token=${token}`,
+        button_link: `${process.env.PORTAL_HOST}/reset-password?token=${token}&email=${email}`,
       },
     });
 

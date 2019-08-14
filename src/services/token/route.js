@@ -1,14 +1,20 @@
 import express from 'express';
 
-import { getPermissions } from 'common/middleware';
-import getCommonRoute from 'common/route';
 import controller from './controller';
 
 const router = express.Router();
 
 // custom or route below
-const middlewares = [getPermissions];
 
-const route = getCommonRoute(router, controller, middlewares);
+router.get('/validate', async (req, res, next) => {
+  try {
+    const result = await controller.validateToken(req.query.token);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+const route = router;
 
 export default route;
