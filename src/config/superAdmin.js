@@ -15,12 +15,12 @@ const setup = async () => {
       password: process.env.SUPER_USER_PASSWORD,
       role: 'Super_Admin',
     };
-    const { error } = await mainController.signup(data, { role: 'Super_Admin' });
 
-    if (error) {
-      logger.error(error.message, source);
-    } else {
+    try {
+      await mainController.signup(data, { role: 'Super_Admin' });
       logger.info(`Super Admin successfully created! Confirmation email sent to: ${data.email}`, source);
+    } catch (error) {
+      logger.error(error.message, source);
     }
   }
 };
