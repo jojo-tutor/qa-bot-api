@@ -8,7 +8,6 @@ import mailer from 'utils/mailer';
 import TokenModel from 'services/token/model';
 import TokenController from 'services/token/controller';
 import UserModel from 'services/user/model';
-import UserController from 'services/user/controller';
 
 // custom or override controller below
 const customControllers = {
